@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Переводчик Кастомной Раскладки</title>
-  <meta name="description" content="Двусторонний переводчик и декодер кастомной двухсимвольной раскладки (РУС ↔ КАСТОМ) с поддержкой латинских тегов и таблицей подстановки." />
+  <meta name="description" content="Двусторонний переводчик и декодер кастомной двухсимвольной раскладки для русского (33 буквы) и английского (26 букв) языков." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -25,7 +25,6 @@
   </style>
 </head>
 <body class="min-h-screen bg-[#0b0f17] text-slate-100 flex flex-col">
-  <!-- Top Bar Contract: 3 zones -->
   <header class="flex items-center justify-between gap-8 px-6 py-4 border-b border-slate-800 bg-[#0b0f17]/95 sticky top-0 z-30 backdrop-blur-sm">
     <a href="#translator" class="text-lg font-bold tracking-tight text-white whitespace-nowrap shrink-0">
       КастомРаскладка
@@ -33,7 +32,7 @@
     <nav aria-label="Основная навигация" class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
       <a href="#translator" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Переводчик</a>
       <a href="#token-inspector" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Разбор пар</a>
-      <a href="#cipher-table" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Таблица символов</a>
+      <a href="#cipher-table" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Таблица (59)</a>
       <a href="#history-section" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Журнал фраз</a>
       <a href="#system-prompt" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Системный промпт</a>
     </nav>
@@ -50,42 +49,46 @@
       <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            Переводчик кастомной раскладки
+            Переводчик кастомной раскладки (РУС + EN)
           </h1>
           <p class="text-sm text-slate-400 mt-1 max-w-2xl">
-            Вводите текст на русском (например, «привет») или код на вашей раскладке («h(j)o9e3y6l+») — оба поля переводят в обе стороны мгновенно.
+            Пишите на русском («привет» → «h(j)o9e3y6l+») или на английском («hello» → «8i5t%s%s*g») — оба языка переводятся в кастомную раскладку и обратно.
           </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2 shrink-0">
           <div class="flex items-center gap-1 p-1 bg-[#111827] border border-slate-800 rounded-lg">
             <button type="button" id="btn-dir-ru" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-blue-600 text-white cursor-pointer">
-              РУС → КАСТОМ
+              ТЕКСТ → КАСТОМ
             </button>
-            <button type="button" id="btn-swap-dir" title="Переключить активное направление" class="px-2 py-1 text-xs text-slate-400 hover:text-white rounded-md transition-colors cursor-pointer">
+            <button type="button" id="btn-swap-dir" title="Переключить направление" class="px-2 py-1 text-xs text-slate-400 hover:text-white rounded-md transition-colors cursor-pointer">
               ⇄
             </button>
             <button type="button" id="btn-dir-custom" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">
-              КАСТОМ → РУС
+              КАСТОМ → ТЕКСТ
             </button>
           </div>
 
           <div class="flex items-center gap-1 p-1 bg-[#111827] border border-slate-800 rounded-lg">
-            <button type="button" id="btn-sep-space" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer">
-              Пробел « »
+            <button type="button" data-enmode="en-cipher" class="en-mode-btn px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-emerald-600 text-white cursor-pointer">
+              EN Шифр (1q..~m)
             </button>
-            <button type="button" id="btn-sep-under" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">
-              Символ «_»
+            <button type="button" data-enmode="en-translit" class="en-mode-btn px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">
+              EN Транслит (q1..;6)
+            </button>
+            <button type="button" data-enmode="wrap-brackets" class="en-mode-btn px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">
+              Теги [lat]
             </button>
           </div>
 
-          <button type="button" id="btn-wrap-latin" class="px-3 py-2 text-xs font-medium rounded-lg border transition-colors whitespace-nowrap shrink-0 bg-[#111827] border-blue-500/60 text-blue-300 cursor-pointer">
-            Теги [lat]: Вкл
-          </button>
-
-          <button type="button" id="btn-strip-brackets" class="px-3 py-2 text-xs font-medium rounded-lg border transition-colors whitespace-nowrap shrink-0 bg-[#111827] border-slate-700 text-slate-200 cursor-pointer">
-            Декод без [..]
-          </button>
+          <div class="flex items-center gap-1 p-1 bg-[#111827] border border-slate-800 rounded-lg">
+            <button type="button" id="btn-sep-space" class="px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer">
+              Пробел « »
+            </button>
+            <button type="button" id="btn-sep-under" class="px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">
+              Символ «_»
+            </button>
+          </div>
         </div>
       </div>
 
@@ -93,10 +96,13 @@
       <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
         <div class="flex flex-wrap items-center gap-2">
           <span class="text-xs text-slate-400 mr-1">Быстрые примеры:</span>
-          <button type="button" data-preset="привет" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">привет</button>
-          <button type="button" data-preset="привет как дела" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">привет как дела (пример из таблицы)</button>
-          <button type="button" data-preset="проверь папку [mcp] и подключи [plugins]" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">команды [mcp] и [plugins]</button>
-          <button type="button" data-preset="обнови [rules] и сделай тест" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">правила [rules] и сок</button>
+          <button type="button" data-preset="привет" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">привет (РУС)</button>
+          <button type="button" data-preset="hello world" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">hello world (EN шифр)</button>
+          <button type="button" data-preset="привет как дела hello" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">привет как дела + hello</button>
+          <button type="button" data-preset="check [mcp] и подключи [plugins]" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">команды [mcp] и [plugins]</button>
+          <button type="button" id="btn-strip-brackets" class="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-slate-200 bg-[#111827] border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">
+            Декод без [..]
+          </button>
         </div>
 
         <div class="flex items-center gap-2">
@@ -115,19 +121,19 @@
           <div>
             <div class="flex items-center justify-between gap-4 pb-3 border-b border-slate-800">
               <label for="russian-textarea" class="text-sm font-semibold text-slate-100">
-                Русский язык (Исходный текст / Декод)
+                Русский и Английский язык (Исходный текст / Декод)
               </label>
               <div class="flex items-center gap-2">
                 <span id="ru-char-count" class="text-xs font-mono text-slate-400 tabular-nums">15 симв.</span>
                 <button type="button" id="btn-copy-ru" class="px-3 py-1.5 text-xs font-medium text-slate-200 bg-[#0b0f17] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">
-                  Копировать русский
+                  Копировать текст
                 </button>
               </div>
             </div>
-            <textarea id="russian-textarea" rows="6" placeholder="Введите текст на русском (например: привет как дела)..." class="w-full mt-3 bg-transparent text-base text-slate-100 placeholder-slate-500 focus:outline-none resize-y leading-relaxed">привет как дела</textarea>
+            <textarea id="russian-textarea" rows="6" placeholder="Введите текст на русском («привет») или английском («hello world»)..." class="w-full mt-3 bg-transparent text-base text-slate-100 placeholder-slate-500 focus:outline-none resize-y leading-relaxed">привет как дела</textarea>
           </div>
           <div class="pt-3 mt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-            <span>Прямой ввод на русском</span>
+            <span>Ввод на русском (А–Я) и английском (A–Z)</span>
             <span id="ru-word-count" class="font-mono tabular-nums">Слов: 3</span>
           </div>
         </div>
@@ -136,7 +142,7 @@
           <div>
             <div class="flex items-center justify-between gap-4 pb-3 border-b border-slate-800">
               <label for="custom-textarea" class="text-sm font-semibold text-blue-300">
-                Ваша кастомная раскладка (Шифр подстановки)
+                Ваша кастомная раскладка (РУС q1..;6 + EN 1q..~m)
               </label>
               <div class="flex items-center gap-2">
                 <span id="custom-char-count" class="text-xs font-mono text-slate-400 tabular-nums">28 симв.</span>
@@ -145,10 +151,10 @@
                 </button>
               </div>
             </div>
-            <textarea id="custom-textarea" rows="6" placeholder="Введите или вставьте код на кастомной раскладке..." class="w-full mt-3 bg-transparent font-mono text-base text-blue-200 placeholder-slate-500 focus:outline-none resize-y leading-relaxed">h(j)o9e3y6l+ a$q1a$ t5y6s%q1</textarea>
+            <textarea id="custom-textarea" rows="6" placeholder="Введите или вставьте код раскладки (напр. h(j)o9e3y6l+ или 8i5t%s%s*g)..." class="w-full mt-3 bg-transparent font-mono text-base text-blue-200 placeholder-slate-500 focus:outline-none resize-y leading-relaxed">h(j)o9e3y6l+ a$q1a$ t5y6s%q1</textarea>
           </div>
           <div class="pt-3 mt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-            <span>Поддержка пробела, «_» и тегов [mcp], [plugins], [rules]</span>
+            <span>Поддержка РУС (33), EN (26), пробела/«_» и тегов [mcp]</span>
             <span class="font-mono text-blue-400 tabular-nums">2 симв. = 1 буква</span>
           </div>
         </div>
@@ -160,50 +166,51 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
         <div>
           <h2 class="text-base font-semibold text-slate-100 tracking-tight">
-            Посимвольный разбор пар (РУС ↔ КАСТОМ)
+            Посимвольный разбор пар (РУС + АНГЛ ↔ КАСТОМ)
           </h2>
           <p class="text-xs text-slate-400 mt-0.5">
-            Наведите курсор на любую пару, чтобы подсветить соответствующую клавишу в таблице.
+            Наведите курсор на любую пару, чтобы подсветить соответствующую русскую или английскую клавишу в таблице.
           </p>
         </div>
         <div id="token-counts" class="flex items-center gap-2 text-xs text-slate-400 font-mono tabular-nums">
-          Букв: 13 · Пробелов: 2 · Латиница [..]: 0
+          РУС: 13 · EN: 0 · Пробелов: 2 · Теги [..]: 0
         </div>
       </div>
       <div id="token-stream-list" class="mt-4 flex flex-wrap items-center gap-1.5 max-h-56 overflow-y-auto pr-1"></div>
     </section>
 
-    <!-- Interactive 33-Key Cipher Matrix -->
+    <!-- Interactive 59-Key Cipher Matrix -->
     <section id="cipher-table" class="bg-[#111827] border border-slate-800 rounded-xl p-6">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-800">
         <div>
           <h2 class="text-lg font-semibold text-slate-100 tracking-tight">
-            Интерактивная таблица раскладки (33 символа)
+            Интерактивная таблица раскладки (РУС 33 + АНГЛ 26 = 59 клавиш)
           </h2>
           <p class="text-sm text-slate-400 mt-1">
-            Нажмите на любую клавишу в таблице, чтобы вставить символ в активное поле ввода.
+            Нажмите на любую русскую или английскую клавишу в таблице, чтобы вставить символ в поле ввода.
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
           <div class="flex items-center gap-1 p-1 bg-[#0b0f17] border border-slate-800 rounded-lg">
-            <button type="button" data-row="all" class="row-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer">Все 33</button>
-            <button type="button" data-row="row1" class="row-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">А–Й (q1–p0)</button>
-            <button type="button" data-row="row2" class="row-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">К–Т (a$–l+)</button>
-            <button type="button" data-row="row3" class="row-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">У–Я (z=–;6)</button>
+            <button type="button" data-lang="all" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer">Все 59 (РУС + EN)</button>
+            <button type="button" data-lang="ru" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">Русский (33 · А=q1…Я=;6)</button>
+            <button type="button" data-lang="en" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">English (26 · A=1q…Z=~m)</button>
           </div>
-          <input type="text" id="matrix-search" placeholder="Найти букву или код (напр. h( или п)..." class="px-3 py-1.5 text-xs bg-[#0b0f17] border border-slate-800 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-64" />
+          <input type="text" id="matrix-search" placeholder="Поиск буквы или кода (п, h(, a, 1q)..." class="px-3 py-1.5 text-xs bg-[#0b0f17] border border-slate-800 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-64" />
         </div>
       </div>
       <div id="matrix-content" class="mt-5 space-y-5"></div>
       <div class="mt-6 pt-4 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-400">
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-slate-300 font-medium">Правила разделения:</span>
-          <span>Пробел = обычный пробел или символ «_»</span>
+          <span class="text-slate-300 font-medium">Правила:</span>
+          <span>РУС: А=q1 … Я=;6</span>
           <span>·</span>
-          <span>Латиница и команды = в квадратных скобках: [mcp], [plugins], [rules]</span>
+          <span>АНГЛ: A=1q … Z=~m</span>
+          <span>·</span>
+          <span>Теги без шифра в скобках: [mcp], [plugins], [rules]</span>
         </div>
         <div id="matrix-shown-count" class="font-mono text-slate-400 tabular-nums shrink-0">
-          Показано: 33 из 33
+          Показано: 59 из 59
         </div>
       </div>
     </section>
@@ -216,7 +223,7 @@
             Журнал сохранённых фраз
           </h2>
           <p class="text-xs text-slate-400 mt-0.5">
-            Быстрое переключение между часто используемыми фразами и командами на вашей раскладке.
+            Быстрое переключение между часто используемыми русскими и английскими фразами на вашей раскладке.
           </p>
         </div>
         <span id="history-count" class="text-xs font-mono text-slate-400 tabular-nums">Записей: 2</span>
@@ -225,7 +232,7 @@
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-slate-800 text-xs text-slate-400">
-              <th class="py-2.5 pr-4 font-medium">Русский текст</th>
+              <th class="py-2.5 pr-4 font-medium">Текст (РУС / EN)</th>
               <th class="py-2.5 px-4 font-medium">Запись на кастомной раскладке</th>
               <th class="py-2.5 px-4 font-medium">Метка</th>
               <th class="py-2.5 pl-4 font-medium text-right">Действия</th>
@@ -244,7 +251,7 @@
             Системная инструкция и экспорт для нейросети
           </h2>
           <p class="text-xs text-slate-400 mt-1">
-            Готовый блок системной инструкции с таблицей подстановки и вашим текущим закодированным сообщением.
+            Готовый блок системной инструкции с таблицами РУС (33) + АНГЛ (26) и вашим текущим закодированным сообщением.
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-2.5">
@@ -259,8 +266,8 @@
       <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div class="bg-[#0b0f17] border border-slate-800 rounded-lg p-4">
           <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-            <span class="font-medium text-slate-300">Таблица и правила (из файла спецификации)</span>
-            <span class="font-mono tabular-nums">code_artifact_403aff5e.txt</span>
+            <span class="font-medium text-slate-300">Таблица и правила (РУС 33 + АНГЛ 26)</span>
+            <span class="font-mono tabular-nums">59 пар</span>
           </div>
           <pre id="spec-static-box" class="text-xs font-mono text-slate-300 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto"></pre>
         </div>
@@ -274,7 +281,7 @@
           </div>
           <div class="mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-400 flex items-center justify-between">
             <span>Готово к отправке в чат или промпт</span>
-            <span class="font-mono text-slate-300">РУС ↔ КАСТОМ (33 пары)</span>
+            <span class="font-mono text-slate-300">РУС + АНГЛ ↔ КАСТОМ (59 пар)</span>
           </div>
         </div>
       </div>
@@ -283,40 +290,87 @@
 
   <footer class="border-t border-slate-800/80 py-5 px-6 text-xs text-slate-500">
     <div class="max-w-[1320px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-      <span>Переводчик кастомной раскладки · 33 символа (А=q1 … Я=;6)</span>
-      <span class="font-mono tabular-nums">Поддержка разделителей « » / «_» и латиницы [mcp]</span>
+      <span>Переводчик кастомной раскладки · 59 символов (РУС А=q1…Я=;6 · АНГЛ A=1q…Z=~m)</span>
+      <span class="font-mono tabular-nums">Поддержка разделителей « » / «_» и тегов [mcp]</span>
     </div>
   </footer>
 
   <script>
-    const CIPHER_TABLE = [{"ruUpper":"А","ruLower":"а","code":"q1","rowGroup":"row1","position":1},{"ruUpper":"Б","ruLower":"б","code":"w2","rowGroup":"row1","position":2},{"ruUpper":"В","ruLower":"в","code":"e3","rowGroup":"row1","position":3},{"ruUpper":"Г","ruLower":"г","code":"r4","rowGroup":"row1","position":4},{"ruUpper":"Д","ruLower":"д","code":"t5","rowGroup":"row1","position":5},{"ruUpper":"Е","ruLower":"е","code":"y6","rowGroup":"row1","position":6},{"ruUpper":"Ё","ruLower":"ё","code":"y0","rowGroup":"row1","position":7},{"ruUpper":"Ж","ruLower":"ж","code":"u7","rowGroup":"row1","position":8},{"ruUpper":"З","ruLower":"з","code":"i8","rowGroup":"row1","position":9},{"ruUpper":"И","ruLower":"и","code":"o9","rowGroup":"row1","position":10},{"ruUpper":"Й","ruLower":"й","code":"p0","rowGroup":"row1","position":11},{"ruUpper":"К","ruLower":"к","code":"a$","rowGroup":"row2","position":12},{"ruUpper":"Л","ruLower":"л","code":"s%","rowGroup":"row2","position":13},{"ruUpper":"М","ruLower":"м","code":"d^","rowGroup":"row2","position":14},{"ruUpper":"Н","ruLower":"н","code":"f&","rowGroup":"row2","position":15},{"ruUpper":"О","ruLower":"о","code":"g*","rowGroup":"row2","position":16},{"ruUpper":"П","ruLower":"п","code":"h(","rowGroup":"row2","position":17},{"ruUpper":"Р","ruLower":"р","code":"j)","rowGroup":"row2","position":18},{"ruUpper":"С","ruLower":"с","code":"k_","rowGroup":"row2","position":19},{"ruUpper":"Т","ruLower":"т","code":"l+","rowGroup":"row2","position":20},{"ruUpper":"У","ruLower":"у","code":"z=","rowGroup":"row3","position":21},{"ruUpper":"Ф","ruLower":"ф","code":"x[","rowGroup":"row3","position":22},{"ruUpper":"Х","ruLower":"х","code":"c]","rowGroup":"row3","position":23},{"ruUpper":"Ц","ruLower":"ц","code":"v{","rowGroup":"row3","position":24},{"ruUpper":"Ч","ruLower":"ч","code":"b}","rowGroup":"row3","position":25},{"ruUpper":"Ш","ruLower":"ш","code":"n|","rowGroup":"row3","position":26},{"ruUpper":"Щ","ruLower":"щ","code":"m~","rowGroup":"row3","position":27},{"ruUpper":"Ъ","ruLower":"ъ","code":"<1","rowGroup":"row3","position":28},{"ruUpper":"Ы","ruLower":"ы","code":">2","rowGroup":"row3","position":29},{"ruUpper":"Ь","ruLower":"ь","code":"?3","rowGroup":"row3","position":30},{"ruUpper":"Э","ruLower":"э","code":"/4","rowGroup":"row3","position":31},{"ruUpper":"Ю","ruLower":"ю","code":":5","rowGroup":"row3","position":32},{"ruUpper":"Я","ruLower":"я","code":";6","rowGroup":"row3","position":33}];
-    const SYSTEM_SPEC = "=== СИСТЕМНАЯ ИНСТРУКЦИЯ ДЛЯ НЕЙРОСЕТИ ===\nНиже представлена таблица кастомной раскладки (шифра подстановки). \nПравило чтения: каждый символ или пара символов после знака «=» заменяет соответствующую русскую букву при вводе. При получении текста, написанного на этой раскладке, сначала переведи его по таблице обратно на русский язык, а затем обработай запрос. All English words and paths remain unchanged.\n\n=== ТАБЛИЦА СИМВОЛОВ (РУС -> КАСТОМ) ===\nА = q1\nБ = w2\nВ = e3\nГ = r4\nД = t5\nЕ = y6\nЁ = y0\nЖ = u7\nЗ = i8\nИ = o9\nЙ = p0\nК = a$\nЛ = s%\nМ = d^\nН = f&\nО = g*\nП = h(\nР = j)\nС = k_\nТ = l+\nУ = z=\nФ = x[\nХ = c]\nЦ = v{\nЧ = b}\nШ = n|\nЩ = m~\nЪ = <1\nЫ = >2\nЬ = ?3\nЭ = /4\nЮ = :5\nЯ = ;6\n\n=== ПРАВИЛА РАЗДЕЛЕНИЯ ===\n1. Пробел между словами обозначается символом «_» или обычным пробелом.\n2. Слова на латинице (например, названия папок, файлов или команд) заключаются в квадратные скобки: [mcp], [plugins], [rules].\n\n=== ПРИМЕР ИСПОЛЬЗОВАНИЯ ===\nИсходная фраза: «привет как дела»\nЗапись на кастомной раскладке: h(j)o9e3y6l+ a$q1a$ t5y6s%q1";
+    const CIPHER_TABLE = [{"lang":"ru","ruUpper":"А","ruLower":"а","code":"q1","rowGroup":"row1","position":1},{"lang":"ru","ruUpper":"Б","ruLower":"б","code":"w2","rowGroup":"row1","position":2},{"lang":"ru","ruUpper":"В","ruLower":"в","code":"e3","rowGroup":"row1","position":3},{"lang":"ru","ruUpper":"Г","ruLower":"г","code":"r4","rowGroup":"row1","position":4},{"lang":"ru","ruUpper":"Д","ruLower":"д","code":"t5","rowGroup":"row1","position":5},{"lang":"ru","ruUpper":"Е","ruLower":"е","code":"y6","rowGroup":"row1","position":6},{"lang":"ru","ruUpper":"Ё","ruLower":"ё","code":"y0","rowGroup":"row1","position":7},{"lang":"ru","ruUpper":"Ж","ruLower":"ж","code":"u7","rowGroup":"row1","position":8},{"lang":"ru","ruUpper":"З","ruLower":"з","code":"i8","rowGroup":"row1","position":9},{"lang":"ru","ruUpper":"И","ruLower":"и","code":"o9","rowGroup":"row1","position":10},{"lang":"ru","ruUpper":"Й","ruLower":"й","code":"p0","rowGroup":"row1","position":11},{"lang":"ru","ruUpper":"К","ruLower":"к","code":"a$","rowGroup":"row2","position":12},{"lang":"ru","ruUpper":"Л","ruLower":"л","code":"s%","rowGroup":"row2","position":13},{"lang":"ru","ruUpper":"М","ruLower":"м","code":"d^","rowGroup":"row2","position":14},{"lang":"ru","ruUpper":"Н","ruLower":"н","code":"f&","rowGroup":"row2","position":15},{"lang":"ru","ruUpper":"О","ruLower":"о","code":"g*","rowGroup":"row2","position":16},{"lang":"ru","ruUpper":"П","ruLower":"п","code":"h(","rowGroup":"row2","position":17},{"lang":"ru","ruUpper":"Р","ruLower":"р","code":"j)","rowGroup":"row2","position":18},{"lang":"ru","ruUpper":"С","ruLower":"с","code":"k_","rowGroup":"row2","position":19},{"lang":"ru","ruUpper":"Т","ruLower":"т","code":"l+","rowGroup":"row2","position":20},{"lang":"ru","ruUpper":"У","ruLower":"у","code":"z=","rowGroup":"row3","position":21},{"lang":"ru","ruUpper":"Ф","ruLower":"ф","code":"x[","rowGroup":"row3","position":22},{"lang":"ru","ruUpper":"Х","ruLower":"х","code":"c]","rowGroup":"row3","position":23},{"lang":"ru","ruUpper":"Ц","ruLower":"ц","code":"v{","rowGroup":"row3","position":24},{"lang":"ru","ruUpper":"Ч","ruLower":"ч","code":"b}","rowGroup":"row3","position":25},{"lang":"ru","ruUpper":"Ш","ruLower":"ш","code":"n|","rowGroup":"row3","position":26},{"lang":"ru","ruUpper":"Щ","ruLower":"щ","code":"m~","rowGroup":"row3","position":27},{"lang":"ru","ruUpper":"Ъ","ruLower":"ъ","code":"<1","rowGroup":"row3","position":28},{"lang":"ru","ruUpper":"Ы","ruLower":"ы","code":">2","rowGroup":"row3","position":29},{"lang":"ru","ruUpper":"Ь","ruLower":"ь","code":"?3","rowGroup":"row3","position":30},{"lang":"ru","ruUpper":"Э","ruLower":"э","code":"/4","rowGroup":"row3","position":31},{"lang":"ru","ruUpper":"Ю","ruLower":"ю","code":":5","rowGroup":"row3","position":32},{"lang":"ru","ruUpper":"Я","ruLower":"я","code":";6","rowGroup":"row3","position":33}];
+    const EN_CIPHER_TABLE = [{"lang":"en","ruUpper":"A","ruLower":"a","code":"q!","rowGroup":"en1","position":1},{"lang":"en","ruUpper":"B","ruLower":"b","code":"w@","rowGroup":"en1","position":2},{"lang":"en","ruUpper":"C","ruLower":"c","code":"e#","rowGroup":"en1","position":3},{"lang":"en","ruUpper":"D","ruLower":"d","code":"r$","rowGroup":"en1","position":4},{"lang":"en","ruUpper":"E","ruLower":"e","code":"t%","rowGroup":"en1","position":5},{"lang":"en","ruUpper":"F","ruLower":"f","code":"y^","rowGroup":"en1","position":6},{"lang":"en","ruUpper":"G","ruLower":"g","code":"u&","rowGroup":"en1","position":7},{"lang":"en","ruUpper":"H","ruLower":"h","code":"i*","rowGroup":"en1","position":8},{"lang":"en","ruUpper":"I","ruLower":"i","code":"o(","rowGroup":"en1","position":9},{"lang":"en","ruUpper":"J","ruLower":"j","code":"p)","rowGroup":"en1","position":10},{"lang":"en","ruUpper":"K","ruLower":"k","code":"a1","rowGroup":"en2","position":11},{"lang":"en","ruUpper":"L","ruLower":"l","code":"s2","rowGroup":"en2","position":12},{"lang":"en","ruUpper":"M","ruLower":"m","code":"d3","rowGroup":"en2","position":13},{"lang":"en","ruUpper":"N","ruLower":"n","code":"f4","rowGroup":"en2","position":14},{"lang":"en","ruUpper":"O","ruLower":"o","code":"g5","rowGroup":"en2","position":15},{"lang":"en","ruUpper":"P","ruLower":"p","code":"h6","rowGroup":"en2","position":16},{"lang":"en","ruUpper":"Q","ruLower":"q","code":"j7","rowGroup":"en2","position":17},{"lang":"en","ruUpper":"R","ruLower":"r","code":"k8","rowGroup":"en2","position":18},{"lang":"en","ruUpper":"S","ruLower":"s","code":"l9","rowGroup":"en2","position":19},{"lang":"en","ruUpper":"T","ruLower":"t","code":"z1","rowGroup":"en3","position":20},{"lang":"en","ruUpper":"U","ruLower":"u","code":"x2","rowGroup":"en3","position":21},{"lang":"en","ruUpper":"V","ruLower":"v","code":"c3","rowGroup":"en3","position":22},{"lang":"en","ruUpper":"W","ruLower":"w","code":"v4","rowGroup":"en3","position":23},{"lang":"en","ruUpper":"X","ruLower":"x","code":"b5","rowGroup":"en3","position":24},{"lang":"en","ruUpper":"Y","ruLower":"y","code":"n6","rowGroup":"en3","position":25},{"lang":"en","ruUpper":"Z","ruLower":"z","code":"m7","rowGroup":"en3","position":26}];
+    const ALL_ENTRIES = [{"lang":"ru","ruUpper":"А","ruLower":"а","code":"q1","rowGroup":"row1","position":1},{"lang":"ru","ruUpper":"Б","ruLower":"б","code":"w2","rowGroup":"row1","position":2},{"lang":"ru","ruUpper":"В","ruLower":"в","code":"e3","rowGroup":"row1","position":3},{"lang":"ru","ruUpper":"Г","ruLower":"г","code":"r4","rowGroup":"row1","position":4},{"lang":"ru","ruUpper":"Д","ruLower":"д","code":"t5","rowGroup":"row1","position":5},{"lang":"ru","ruUpper":"Е","ruLower":"е","code":"y6","rowGroup":"row1","position":6},{"lang":"ru","ruUpper":"Ё","ruLower":"ё","code":"y0","rowGroup":"row1","position":7},{"lang":"ru","ruUpper":"Ж","ruLower":"ж","code":"u7","rowGroup":"row1","position":8},{"lang":"ru","ruUpper":"З","ruLower":"з","code":"i8","rowGroup":"row1","position":9},{"lang":"ru","ruUpper":"И","ruLower":"и","code":"o9","rowGroup":"row1","position":10},{"lang":"ru","ruUpper":"Й","ruLower":"й","code":"p0","rowGroup":"row1","position":11},{"lang":"ru","ruUpper":"К","ruLower":"к","code":"a$","rowGroup":"row2","position":12},{"lang":"ru","ruUpper":"Л","ruLower":"л","code":"s%","rowGroup":"row2","position":13},{"lang":"ru","ruUpper":"М","ruLower":"м","code":"d^","rowGroup":"row2","position":14},{"lang":"ru","ruUpper":"Н","ruLower":"н","code":"f&","rowGroup":"row2","position":15},{"lang":"ru","ruUpper":"О","ruLower":"о","code":"g*","rowGroup":"row2","position":16},{"lang":"ru","ruUpper":"П","ruLower":"п","code":"h(","rowGroup":"row2","position":17},{"lang":"ru","ruUpper":"Р","ruLower":"р","code":"j)","rowGroup":"row2","position":18},{"lang":"ru","ruUpper":"С","ruLower":"с","code":"k_","rowGroup":"row2","position":19},{"lang":"ru","ruUpper":"Т","ruLower":"т","code":"l+","rowGroup":"row2","position":20},{"lang":"ru","ruUpper":"У","ruLower":"у","code":"z=","rowGroup":"row3","position":21},{"lang":"ru","ruUpper":"Ф","ruLower":"ф","code":"x[","rowGroup":"row3","position":22},{"lang":"ru","ruUpper":"Х","ruLower":"х","code":"c]","rowGroup":"row3","position":23},{"lang":"ru","ruUpper":"Ц","ruLower":"ц","code":"v{","rowGroup":"row3","position":24},{"lang":"ru","ruUpper":"Ч","ruLower":"ч","code":"b}","rowGroup":"row3","position":25},{"lang":"ru","ruUpper":"Ш","ruLower":"ш","code":"n|","rowGroup":"row3","position":26},{"lang":"ru","ruUpper":"Щ","ruLower":"щ","code":"m~","rowGroup":"row3","position":27},{"lang":"ru","ruUpper":"Ъ","ruLower":"ъ","code":"<1","rowGroup":"row3","position":28},{"lang":"ru","ruUpper":"Ы","ruLower":"ы","code":">2","rowGroup":"row3","position":29},{"lang":"ru","ruUpper":"Ь","ruLower":"ь","code":"?3","rowGroup":"row3","position":30},{"lang":"ru","ruUpper":"Э","ruLower":"э","code":"/4","rowGroup":"row3","position":31},{"lang":"ru","ruUpper":"Ю","ruLower":"ю","code":":5","rowGroup":"row3","position":32},{"lang":"ru","ruUpper":"Я","ruLower":"я","code":";6","rowGroup":"row3","position":33},{"lang":"en","ruUpper":"A","ruLower":"a","code":"q!","rowGroup":"en1","position":1},{"lang":"en","ruUpper":"B","ruLower":"b","code":"w@","rowGroup":"en1","position":2},{"lang":"en","ruUpper":"C","ruLower":"c","code":"e#","rowGroup":"en1","position":3},{"lang":"en","ruUpper":"D","ruLower":"d","code":"r$","rowGroup":"en1","position":4},{"lang":"en","ruUpper":"E","ruLower":"e","code":"t%","rowGroup":"en1","position":5},{"lang":"en","ruUpper":"F","ruLower":"f","code":"y^","rowGroup":"en1","position":6},{"lang":"en","ruUpper":"G","ruLower":"g","code":"u&","rowGroup":"en1","position":7},{"lang":"en","ruUpper":"H","ruLower":"h","code":"i*","rowGroup":"en1","position":8},{"lang":"en","ruUpper":"I","ruLower":"i","code":"o(","rowGroup":"en1","position":9},{"lang":"en","ruUpper":"J","ruLower":"j","code":"p)","rowGroup":"en1","position":10},{"lang":"en","ruUpper":"K","ruLower":"k","code":"a1","rowGroup":"en2","position":11},{"lang":"en","ruUpper":"L","ruLower":"l","code":"s2","rowGroup":"en2","position":12},{"lang":"en","ruUpper":"M","ruLower":"m","code":"d3","rowGroup":"en2","position":13},{"lang":"en","ruUpper":"N","ruLower":"n","code":"f4","rowGroup":"en2","position":14},{"lang":"en","ruUpper":"O","ruLower":"o","code":"g5","rowGroup":"en2","position":15},{"lang":"en","ruUpper":"P","ruLower":"p","code":"h6","rowGroup":"en2","position":16},{"lang":"en","ruUpper":"Q","ruLower":"q","code":"j7","rowGroup":"en2","position":17},{"lang":"en","ruUpper":"R","ruLower":"r","code":"k8","rowGroup":"en2","position":18},{"lang":"en","ruUpper":"S","ruLower":"s","code":"l9","rowGroup":"en2","position":19},{"lang":"en","ruUpper":"T","ruLower":"t","code":"z1","rowGroup":"en3","position":20},{"lang":"en","ruUpper":"U","ruLower":"u","code":"x2","rowGroup":"en3","position":21},{"lang":"en","ruUpper":"V","ruLower":"v","code":"c3","rowGroup":"en3","position":22},{"lang":"en","ruUpper":"W","ruLower":"w","code":"v4","rowGroup":"en3","position":23},{"lang":"en","ruUpper":"X","ruLower":"x","code":"b5","rowGroup":"en3","position":24},{"lang":"en","ruUpper":"Y","ruLower":"y","code":"n6","rowGroup":"en3","position":25},{"lang":"en","ruUpper":"Z","ruLower":"z","code":"m7","rowGroup":"en3","position":26}];
+    const SYSTEM_SPEC = "=== СИСТЕМНАЯ ИНСТРУКЦИЯ ДЛЯ НЕЙРОСЕТИ ===\nНиже представлена таблица кастомной раскладки (шифра подстановки) для русского и английского языков.\nПравило чтения: каждая пара символов после знака «=» заменяет соответствующую русскую или английскую букву при вводе. При получении текста, написанного на этой раскладке, сначала переведи его по таблицам обратно на русский/английский язык, а затем обработай запрос.\n\n=== ТАБЛИЦА СИМВОЛОВ (РУС -> КАСТОМ, 33 БУКВЫ) ===\nА = q1\nБ = w2\nВ = e3\nГ = r4\nД = t5\nЕ = y6\nЁ = y0\nЖ = u7\nЗ = i8\nИ = o9\nЙ = p0\nК = a$\nЛ = s%\nМ = d^\nН = f&\nО = g*\nП = h(\nР = j)\nС = k_\nТ = l+\nУ = z=\nФ = x[\nХ = c]\nЦ = v{\nЧ = b}\nШ = n|\nЩ = m~\nЪ = <1\nЫ = >2\nЬ = ?3\nЭ = /4\nЮ = :5\nЯ = ;6\n\n=== ТАБЛИЦА СИМВОЛОВ (АНГЛ -> КАСТОМ, 26 БУКВ) ===\nA = q!\nB = w@\nC = e#\nD = r$\nE = t%\nF = y^\nG = u&\nH = i*\nI = o(\nJ = p)\nK = a1\nL = s2\nM = d3\nN = f4\nO = g5\nP = h6\nQ = j7\nR = k8\nS = l9\nT = z1\nU = x2\nV = c3\nW = v4\nX = b5\nY = n6\nZ = m7\n\n=== ПРАВИЛА РАЗДЕЛЕНИЯ ===\n1. Пробел между словами обозначается символом «_» или обычным пробелом.\n2. Технические теги и команды без шифрования заключаются в квадратные скобки: [mcp], [plugins], [rules].\n\n=== ПРИМЕРЫ ИСПОЛЬЗОВАНИЯ ===\nРУС: «привет как дела» -> h(j)o9e3y6l+ a$q1a$ t5y6s%q1\nАНГЛ: «hello world» -> i*t%s2s2g5 v4g5k8s2r$";
+
     const ROW_LABELS = {
-      row1: 'Верхний ряд (А–Й · q1–p0)',
-      row2: 'Средний ряд (К–Т · a$–l+)',
-      row3: 'Нижний ряд (У–Я · z=–;6)'
+      row1: 'РУС · Верхний ряд (А–Й · q1–p0)',
+      row2: 'РУС · Средний ряд (К–Т · a$–l+)',
+      row3: 'РУС · Нижний ряд (У–Я · z=–;6)',
+      en1: 'EN · Верхний ряд (A–J · 1q–0p)',
+      en2: 'EN · Средний ряд (K–S · $a–+l)',
+      en3: 'EN · Нижний ряд (T–Z · =z–~m)'
     };
 
     const ruToCode = new Map();
-    const codeToRu = new Map();
+    const enToCode = new Map();
+    const codeToChar = new Map();
+
     CIPHER_TABLE.forEach(e => {
       ruToCode.set(e.ruUpper, e.code);
       ruToCode.set(e.ruLower, e.code);
-      codeToRu.set(e.code, e.ruLower);
-      codeToRu.set(e.code.toUpperCase(), e.ruLower);
+      codeToChar.set(e.code, { char: e.ruLower, lang: 'ru' });
+      codeToChar.set(e.code.toUpperCase(), { char: e.ruLower, lang: 'ru' });
     });
+
+    EN_CIPHER_TABLE.forEach(e => {
+      enToCode.set(e.ruUpper, e.code);
+      enToCode.set(e.ruLower, e.code);
+      codeToChar.set(e.code, { char: e.ruLower, lang: 'en' });
+      codeToChar.set(e.code.toUpperCase(), { char: e.ruLower, lang: 'en' });
+    });
+
+    const EN_TRANSLIT_DIGRAPHS = [
+      ['shch', 'щ'], ['yo', 'ё'], ['zh', 'ж'], ['kh', 'х'],
+      ['ts', 'ц'], ['ch', 'ч'], ['sh', 'ш'], ['yu', 'ю'], ['ya', 'я']
+    ];
+    const EN_TRANSLIT_SINGLE = {
+      a:'а', b:'б', v:'в', g:'г', d:'д', e:'е', z:'з', i:'и', j:'й', k:'к',
+      l:'л', m:'м', n:'н', o:'о', p:'п', r:'р', s:'с', t:'т', u:'у', f:'ф',
+      h:'х', c:'ц', w:'в', q:'к', y:'ы', x:'кс'
+    };
+
+    function transliterateEnToRu(word) {
+      let out = '';
+      let i = 0;
+      const lower = word.toLowerCase();
+      while (i < lower.length) {
+        let matched = false;
+        for (const [dg, ru] of EN_TRANSLIT_DIGRAPHS) {
+          if (lower.startsWith(dg, i)) {
+            out += ru;
+            i += dg.length;
+            matched = true;
+            break;
+          }
+        }
+        if (matched) continue;
+        const ch = lower[i];
+        out += EN_TRANSLIT_SINGLE[ch] || word[i];
+        i++;
+      }
+      return out;
+    }
 
     let direction = 'ru-to-custom';
     let spaceMode = 'space';
-    let wrapLatin = true;
+    let englishMode = 'en-cipher';
     let stripLatinBrackets = true;
-    let activeRowFilter = 'all';
+    let activeLangFilter = 'all';
     let searchQuery = '';
     let highlightedCode = null;
 
     let historyItems = [
-      { id: 'seed-1', ruText: 'привет как дела', customText: 'h(j)o9e3y6l+ a$q1a$ t5y6s%q1', spaceMode: 'space', timestamp: 'Эталон из спецификации' },
-      { id: 'seed-2', ruText: 'привет', customText: 'h(j)o9e3y6l+', spaceMode: 'space', timestamp: 'Быстрый шаблон' }
+      { id: 'seed-1', ruText: 'привет как дела', customText: 'h(j)o9e3y6l+ a$q1a$ t5y6s%q1', spaceMode: 'space', timestamp: 'РУС эталон' },
+      { id: 'seed-2', ruText: 'hello world', customText: 'i*t%s2s2g5 v4g5k8s2r$', spaceMode: 'space', timestamp: 'EN эталон' }
     ];
 
     const ruTextarea = document.getElementById('russian-textarea');
@@ -345,9 +399,9 @@
             continue;
           }
         }
-        const code = ruToCode.get(ch);
-        if (code !== undefined) {
-          res += code;
+        const ruCode = ruToCode.get(ch);
+        if (ruCode !== undefined) {
+          res += ruCode;
           i++;
           continue;
         }
@@ -357,12 +411,29 @@
           continue;
         }
         if (isLatinLetter(ch)) {
-          let end = i + 1;
-          while (end < input.length && isLatinWordChar(input[end])) end++;
-          const run = input.slice(i, end);
-          res += wrapLatin ? '[' + run + ']' : run;
-          i = end;
-          continue;
+          if (englishMode === 'en-cipher') {
+            const enCode = enToCode.get(ch);
+            if (enCode !== undefined) {
+              res += enCode;
+              i++;
+              continue;
+            }
+          } else if (englishMode === 'en-translit') {
+            let end = i + 1;
+            while (end < input.length && isLatinLetter(input[end])) end++;
+            const ruEq = transliterateEnToRu(input.slice(i, end));
+            for (const rCh of ruEq) {
+              res += ruToCode.get(rCh) || rCh;
+            }
+            i = end;
+            continue;
+          } else {
+            let end = i + 1;
+            while (end < input.length && isLatinWordChar(input[end])) end++;
+            res += '[' + input.slice(i, end) + ']';
+            i = end;
+            continue;
+          }
         }
         res += ch;
         i++;
@@ -375,21 +446,22 @@
       let i = 0;
       while (i < input.length) {
         const ch = input[i];
-        if (i + 1 < input.length) {
-          const pair = input.slice(i, i + 2);
-          const ru = codeToRu.get(pair) || codeToRu.get(pair.toLowerCase());
-          if (ru !== undefined) {
-            res += ru;
-            i += 2;
-            continue;
-          }
-        }
         if (ch === '[') {
+          const pair = input.slice(i, i + 2).toLowerCase();
           const closeIdx = input.indexOf(']', i + 1);
-          if (closeIdx !== -1) {
+          if (closeIdx !== -1 && pair !== '[x') {
             const inner = input.slice(i + 1, closeIdx);
             res += stripLatinBrackets ? inner : '[' + inner + ']';
             i = closeIdx + 1;
+            continue;
+          }
+        }
+        if (i + 1 < input.length) {
+          const pair = input.slice(i, i + 2);
+          const hit = codeToChar.get(pair) || codeToChar.get(pair.toLowerCase());
+          if (hit !== undefined) {
+            res += hit.char;
+            i += 2;
             continue;
           }
         }
@@ -420,9 +492,9 @@
               continue;
             }
           }
-          const code = ruToCode.get(ch);
-          if (code !== undefined) {
-            segs.push({ type: 'cipher', ruChar: ch.toLowerCase(), customCode: code });
+          const ruCode = ruToCode.get(ch);
+          if (ruCode !== undefined) {
+            segs.push({ type: 'cipher', ruChar: ch.toLowerCase(), customCode: ruCode });
             i++;
             continue;
           }
@@ -432,12 +504,31 @@
             continue;
           }
           if (isLatinLetter(ch)) {
-            let end = i + 1;
-            while (end < input.length && isLatinWordChar(input[end])) end++;
-            const run = input.slice(i, end);
-            segs.push({ type: 'latin', source: run, target: wrapLatin ? '[' + run + ']' : run });
-            i = end;
-            continue;
+            if (englishMode === 'en-cipher') {
+              const enCode = enToCode.get(ch);
+              if (enCode !== undefined) {
+                segs.push({ type: 'en-cipher', ruChar: ch.toLowerCase(), customCode: enCode });
+                i++;
+                continue;
+              }
+            } else if (englishMode === 'en-translit') {
+              let end = i + 1;
+              while (end < input.length && isLatinLetter(input[end])) end++;
+              const ruEq = transliterateEnToRu(input.slice(i, end));
+              for (const rCh of ruEq) {
+                const c = ruToCode.get(rCh);
+                if (c) segs.push({ type: 'cipher', ruChar: rCh, customCode: c });
+              }
+              i = end;
+              continue;
+            } else {
+              let end = i + 1;
+              while (end < input.length && isLatinWordChar(input[end])) end++;
+              const run = input.slice(i, end);
+              segs.push({ type: 'latin', source: run, target: '[' + run + ']' });
+              i = end;
+              continue;
+            }
           }
           segs.push({ type: 'punct', source: ch, target: ch });
           i++;
@@ -445,22 +536,23 @@
       } else {
         while (i < input.length) {
           const ch = input[i];
-          if (i + 1 < input.length) {
-            const pair = input.slice(i, i + 2);
-            const ru = codeToRu.get(pair) || codeToRu.get(pair.toLowerCase());
-            if (ru !== undefined) {
-              segs.push({ type: 'cipher', ruChar: ru, customCode: pair.toLowerCase() });
-              i += 2;
-              continue;
-            }
-          }
           if (ch === '[') {
+            const pair = input.slice(i, i + 2).toLowerCase();
             const closeIdx = input.indexOf(']', i + 1);
-            if (closeIdx !== -1) {
+            if (closeIdx !== -1 && pair !== '[x') {
               const raw = input.slice(i, closeIdx + 1);
               const inner = input.slice(i + 1, closeIdx);
               segs.push({ type: 'latin', source: raw, target: stripLatinBrackets ? inner : raw });
               i = closeIdx + 1;
+              continue;
+            }
+          }
+          if (i + 1 < input.length) {
+            const pair = input.slice(i, i + 2);
+            const hit = codeToChar.get(pair) || codeToChar.get(pair.toLowerCase());
+            if (hit !== undefined) {
+              segs.push({ type: hit.lang === 'en' ? 'en-cipher' : 'cipher', ruChar: hit.char, customCode: pair.toLowerCase() });
+              i += 2;
               continue;
             }
           }
@@ -480,14 +572,20 @@
       const segs = tokenizeCurrent();
       const listEl = document.getElementById('token-stream-list');
       listEl.innerHTML = '';
-      let cCount = 0, sCount = 0, lCount = 0;
+      let ruCount = 0, enCount = 0, sCount = 0, lCount = 0;
 
       segs.forEach(seg => {
         const div = document.createElement('div');
         if (seg.type === 'cipher') {
-          cCount++;
+          ruCount++;
           div.className = 'flex flex-col items-center justify-center min-w-[44px] px-2.5 py-1.5 rounded-lg bg-[#0b0f17] border border-slate-800 hover:border-blue-500 transition-colors cursor-default';
           div.innerHTML = '<span class="text-xs font-semibold text-slate-200">' + seg.ruChar + '</span><span class="text-xs font-mono font-medium text-blue-400 mt-0.5">' + seg.customCode + '</span>';
+          div.addEventListener('mouseenter', () => { highlightedCode = seg.customCode; renderMatrix(); });
+          div.addEventListener('mouseleave', () => { highlightedCode = null; renderMatrix(); });
+        } else if (seg.type === 'en-cipher') {
+          enCount++;
+          div.className = 'flex flex-col items-center justify-center min-w-[44px] px-2.5 py-1.5 rounded-lg bg-[#0b0f17] border border-emerald-900/70 hover:border-emerald-500 transition-colors cursor-default';
+          div.innerHTML = '<span class="text-xs font-semibold text-slate-100">' + seg.ruChar + '</span><span class="text-xs font-mono font-medium text-emerald-400 mt-0.5">' + seg.customCode + '</span>';
           div.addEventListener('mouseenter', () => { highlightedCode = seg.customCode; renderMatrix(); });
           div.addEventListener('mouseleave', () => { highlightedCode = null; renderMatrix(); });
         } else if (seg.type === 'space') {
@@ -505,22 +603,23 @@
         listEl.appendChild(div);
       });
 
-      document.getElementById('token-counts').textContent = 'Букв: ' + cCount + ' · Пробелов: ' + sCount + ' · Латиница [..]: ' + lCount;
+      document.getElementById('token-counts').textContent = 'РУС: ' + ruCount + ' · EN: ' + enCount + ' · Пробелов: ' + sCount + ' · Теги [..]: ' + lCount;
     }
 
     function createKeyButton(entry) {
       const btn = document.createElement('button');
       btn.type = 'button';
       const isHi = highlightedCode === entry.code;
+      const codeColor = entry.lang === 'en' ? 'text-emerald-400' : 'text-blue-400';
       btn.className = 'group flex flex-col items-center justify-between p-2.5 rounded-lg border transition-colors text-left cursor-pointer ' +
         (isHi ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-[#0b0f17] border-slate-800/90 hover:border-blue-500/60 hover:bg-slate-900');
       btn.innerHTML =
         '<div class="w-full flex items-baseline justify-between">' +
           '<span class="text-base font-bold text-slate-100">' + entry.ruUpper + '</span>' +
-          '<span class="text-[11px] font-mono text-slate-500 tabular-nums">' + String(entry.position).padStart(2, '0') + '</span>' +
+          '<span class="text-[11px] font-mono text-slate-500 tabular-nums">' + entry.lang.toUpperCase() + '·' + String(entry.position).padStart(2, '0') + '</span>' +
         '</div>' +
         '<div class="w-full mt-1.5 pt-1.5 border-t border-slate-800/80 flex items-center justify-between">' +
-          '<span class="text-xs font-mono font-semibold text-blue-400">' + entry.code + '</span>' +
+          '<span class="text-xs font-mono font-semibold ' + codeColor + '">' + entry.code + '</span>' +
         '</div>';
       btn.addEventListener('click', () => {
         if (direction === 'ru-to-custom') {
@@ -539,19 +638,26 @@
       const container = document.getElementById('matrix-content');
       container.innerHTML = '';
       const q = searchQuery.trim().toLowerCase();
-      const filtered = CIPHER_TABLE.filter(e => {
-        if (activeRowFilter !== 'all' && e.rowGroup !== activeRowFilter) return false;
+      const filtered = ALL_ENTRIES.filter(e => {
+        if (activeLangFilter !== 'all' && e.lang !== activeLangFilter) return false;
         if (!q) return true;
         return e.ruLower.includes(q) || e.code.toLowerCase().includes(q);
       });
 
-      document.getElementById('matrix-shown-count').textContent = 'Показано: ' + filtered.length + ' из 33';
+      document.getElementById('matrix-shown-count').textContent = 'Показано: ' + filtered.length + ' из 59';
 
-      if (activeRowFilter === 'all' && !q) {
-        ['row1', 'row2', 'row3'].forEach(rKey => {
-          const rowItems = CIPHER_TABLE.filter(e => e.rowGroup === rKey);
+      const groups = activeLangFilter === 'ru'
+        ? ['row1', 'row2', 'row3']
+        : activeLangFilter === 'en'
+        ? ['en1', 'en2', 'en3']
+        : ['row1', 'row2', 'row3', 'en1', 'en2', 'en3'];
+
+      if (!q) {
+        groups.forEach(rKey => {
+          const rowItems = ALL_ENTRIES.filter(e => e.rowGroup === rKey);
+          const isEn = rKey.startsWith('en');
           const wrap = document.createElement('div');
-          wrap.innerHTML = '<div class="flex items-center justify-between text-xs text-slate-400 mb-2.5"><span class="font-medium text-slate-300">' + ROW_LABELS[rKey] + '</span><span class="font-mono tabular-nums">' + rowItems.length + ' клавиш</span></div>';
+          wrap.innerHTML = '<div class="flex items-center justify-between text-xs text-slate-400 mb-2.5"><span class="font-medium ' + (isEn ? 'text-emerald-300' : 'text-slate-300') + '">' + ROW_LABELS[rKey] + '</span><span class="font-mono tabular-nums">' + rowItems.length + ' клавиш</span></div>';
           const grid = document.createElement('div');
           grid.className = 'grid grid-cols-3 sm:grid-cols-6 md:grid-cols-11 gap-2';
           rowItems.forEach(item => grid.appendChild(createKeyButton(item)));
@@ -624,25 +730,31 @@
       syncAllUI();
     });
 
+    document.querySelectorAll('.en-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        englishMode = btn.getAttribute('data-enmode') || 'en-cipher';
+        document.querySelectorAll('.en-mode-btn').forEach(b => {
+          const active = b.getAttribute('data-enmode') === englishMode;
+          b.className = 'en-mode-btn px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ' +
+            (active ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-slate-200');
+        });
+        customTextarea.value = encodeToCustom(ruTextarea.value);
+        syncAllUI();
+      });
+    });
+
     document.getElementById('btn-sep-space').addEventListener('click', (e) => {
       spaceMode = 'space';
-      e.target.className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer';
-      document.getElementById('btn-sep-under').className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer';
+      e.target.className = 'px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer';
+      document.getElementById('btn-sep-under').className = 'px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer';
       customTextarea.value = encodeToCustom(ruTextarea.value);
       syncAllUI();
     });
 
     document.getElementById('btn-sep-under').addEventListener('click', (e) => {
       spaceMode = 'underscore';
-      e.target.className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer';
-      document.getElementById('btn-sep-space').className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer';
-      customTextarea.value = encodeToCustom(ruTextarea.value);
-      syncAllUI();
-    });
-
-    document.getElementById('btn-wrap-latin').addEventListener('click', (e) => {
-      wrapLatin = !wrapLatin;
-      e.target.textContent = wrapLatin ? 'Теги [lat]: Вкл' : 'Теги [lat]: Выкл';
+      e.target.className = 'px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer';
+      document.getElementById('btn-sep-space').className = 'px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer';
       customTextarea.value = encodeToCustom(ruTextarea.value);
       syncAllUI();
     });
@@ -683,12 +795,13 @@
       renderHistory();
     });
 
-    document.querySelectorAll('.row-filter-btn').forEach(btn => {
+    document.querySelectorAll('.lang-filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        activeRowFilter = btn.getAttribute('data-row') || 'all';
-        document.querySelectorAll('.row-filter-btn').forEach(b => {
-          b.className = 'row-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ' +
-            (b.getAttribute('data-row') === activeRowFilter ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200');
+        activeLangFilter = btn.getAttribute('data-lang') || 'all';
+        document.querySelectorAll('.lang-filter-btn').forEach(b => {
+          const isSel = b.getAttribute('data-lang') === activeLangFilter;
+          b.className = 'lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ' +
+            (isSel ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200');
         });
         renderMatrix();
       });
@@ -709,7 +822,7 @@
       flashCopy(this, direction === 'ru-to-custom' ? customTextarea.value : ruTextarea.value, 'Копировать перевод');
     });
     document.getElementById('btn-copy-ru').addEventListener('click', function() {
-      flashCopy(this, ruTextarea.value, 'Копировать русский');
+      flashCopy(this, ruTextarea.value, 'Копировать текст');
     });
     document.getElementById('btn-copy-custom').addEventListener('click', function() {
       flashCopy(this, customTextarea.value, 'Копировать раскладку');
