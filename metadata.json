@@ -1,0 +1,6 @@
+{
+  "name": "Переводчик Кастомной Раскладки",
+  "description": "Двусторонний переводчик и декодер кастомной двухсимвольной раскладки (РУС ↔ КАСТОМ) с поддержкой латинских тегов и таблицей подстановки.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
