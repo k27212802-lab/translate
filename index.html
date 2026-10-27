@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Переводчик Кастомной Раскладки (РУС + EN)</title>
-  <meta name="description" content="Двусторонний переводчик и декодер кастомной двухсимвольной раскладки для русского (33 буквы) и английского (26 букв) языков с переключением интерфейса RU/EN." />
+  <meta name="description" content="Двусторонний переводчик и декодер кастомных раскладок: Старый код (Лёгкий · 2 символа) и rtc2 code (Сложный · 4 символа, 72 клавиши) для русского и английского языков." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -27,12 +27,12 @@
 <body class="min-h-screen bg-[#0b0f17] text-slate-100 flex flex-col">
   <header class="flex items-center justify-between gap-8 px-6 py-4 border-b border-slate-800 bg-[#0b0f17]/95 sticky top-0 z-30 backdrop-blur-sm">
     <a href="#translator" id="ui-brand" class="text-lg font-bold tracking-tight text-white whitespace-nowrap shrink-0">
-      КастомРаскладка
+      КастомРаскладка · rtc1 & rtc2 code
     </a>
     <nav aria-label="Primary Navigation" class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
       <a href="#translator" id="nav-translator" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Переводчик</a>
-      <a href="#token-inspector" id="nav-tokens" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Разбор пар</a>
-      <a href="#cipher-table" id="nav-matrix" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Таблица (59)</a>
+      <a href="#token-inspector" id="nav-tokens" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Разбор блоков</a>
+      <a href="#cipher-table" id="nav-matrix" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Таблица (72)</a>
       <a href="#history-section" id="nav-history" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Журнал сохранённых фраз</a>
       <a href="#system-prompt" id="nav-prompt" class="hover:text-white transition-colors whitespace-nowrap shrink-0">Системный промпт</a>
     </nav>
@@ -46,14 +46,65 @@
   <main class="flex-1 w-full max-w-[1320px] mx-auto px-4 sm:px-6 py-8 space-y-8">
     <!-- Translator Section -->
     <section id="translator" class="space-y-5">
-      <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+      <div class="flex flex-col gap-4">
         <div>
           <h1 id="ui-hero-title" class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            Переводчик кастомной раскладки (РУС + EN)
+            Двусторонний переводчик кастомных раскладок: Старый (Лёгкий · 2 симв.) и rtc2 code (Сложный · 4 симв.)
           </h1>
-          <p id="ui-hero-subtitle" class="text-sm text-slate-400 mt-1 max-w-2xl">
-            Пишите на русском («привет» → «h(j)o9e3y6l+») или на английском («hello» → «*i%t+s+s[g») — оба языка переводятся в кастомную раскладку и обратно.
+          <p id="ui-hero-subtitle" class="text-sm text-slate-400 mt-1 max-w-4xl">
+            Выберите раскладку галочкой ниже: «Старый (Лёгкий)» кодирует каждую букву 2 символами («привет» → «h(j)o9e3y6l+»), а усложнённый «rtc2 code (Сложный)» кодирует каждую букву, цифру и знак 4 символами («привет» → «j7|sk8:tp0+ke3%cy6*fz0"v»).
           </p>
+        </div>
+
+        <!-- Prominent Layout Selector with Checkmark (✓) -->
+        <div role="radiogroup" aria-label="Выбор раскладки шифра" class="bg-[#111827] border border-slate-800 rounded-2xl p-4">
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+            <span id="ui-layout-selector-label">Выбор раскладки шифра:</span>
+            <span id="ui-active-layout-badge" class="font-mono text-amber-400">✓ rtc2 code (Сложный)</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <!-- Option 1: Старый код (Лёгкий · 2 симв.) -->
+            <button type="button" id="btn-layout-rtc1" class="flex items-start justify-between gap-3.5 p-4 rounded-xl border text-left transition-all cursor-pointer bg-[#0b0f17] border-slate-800 hover:border-slate-700">
+              <div class="flex items-start gap-3">
+                <div id="check-box-rtc1" class="mt-0.5 w-5 h-5 rounded-md flex items-center justify-center border shrink-0 transition-colors bg-slate-900 border-slate-700 text-transparent font-bold text-xs">
+                  ✓
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span id="ui-rtc1-name" class="text-sm font-bold text-white">Старый код</span>
+                    <span id="ui-rtc1-diff" class="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                      Лёгкий · 2 симв.
+                    </span>
+                  </div>
+                  <p id="ui-rtc1-desc" class="text-xs text-slate-400 mt-1 leading-relaxed">
+                    59 клавиш (РУС 33 + EN 26) · 2 символа на букву (А=q1, A=!q)
+                  </p>
+                </div>
+              </div>
+              <span id="status-rtc1" class="text-xs font-mono font-bold text-blue-400 shrink-0 hidden">✓ Выбрано</span>
+            </button>
+
+            <!-- Option 2: rtc2 code (Сложный · 4 симв.) -->
+            <button type="button" id="btn-layout-rtc2" class="flex items-start justify-between gap-3.5 p-4 rounded-xl border text-left transition-all cursor-pointer bg-amber-950/30 border-amber-500 ring-1 ring-amber-500/40">
+              <div class="flex items-start gap-3">
+                <div id="check-box-rtc2" class="mt-0.5 w-5 h-5 rounded-md flex items-center justify-center border shrink-0 transition-colors bg-amber-500 border-amber-300 text-slate-950 font-bold text-xs">
+                  ✓
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span id="ui-rtc2-name" class="text-sm font-bold text-white font-mono">rtc2 code</span>
+                    <span id="ui-rtc2-diff" class="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                      Сложный · 4 симв.
+                    </span>
+                  </div>
+                  <p id="ui-rtc2-desc" class="text-xs text-slate-400 mt-1 leading-relaxed">
+                    72 клавиши (РУС 33 + EN 26 + Цифры/Знаки 13) · 4 символа на знак (А=q1#a, A=!1Qa, 0=~0n!)
+                  </p>
+                </div>
+              </div>
+              <span id="status-rtc2" class="text-xs font-mono font-bold text-amber-400 shrink-0">✓ Выбрано</span>
+            </button>
+          </div>
         </div>
 
         <div class="flex flex-wrap items-center gap-2 shrink-0">
@@ -81,10 +132,10 @@
 
           <div class="flex items-center gap-1 p-1 bg-[#111827] border border-slate-800 rounded-lg">
             <button type="button" id="btn-en-cipher" data-enmode="en-cipher" class="en-mode-btn px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-emerald-600 text-white cursor-pointer">
-              EN Шифр (!q../m)
+              EN Шифр
             </button>
             <button type="button" id="btn-en-translit" data-enmode="en-translit" class="en-mode-btn px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">
-              EN Транслит (q1..;6)
+              EN Транслит
             </button>
             <button type="button" id="btn-en-brackets" data-enmode="wrap-brackets" class="en-mode-btn px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">
               Теги [lat]
@@ -96,7 +147,7 @@
               Пробел « »
             </button>
             <button type="button" id="btn-sep-under" class="px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">
-              Символ «_»
+              Символ «__»
             </button>
           </div>
         </div>
@@ -109,7 +160,7 @@
           <button type="button" id="preset-1" data-preset="привет" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">привет (РУС)</button>
           <button type="button" id="preset-2" data-preset="hello world" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">hello world (EN шифр)</button>
           <button type="button" id="preset-3" data-preset="привет как дела hello" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">привет как дела + hello</button>
-          <button type="button" id="preset-4" data-preset="версия [2] путь [/] точка [.]" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">скобки [2], [/], [.]</button>
+          <button type="button" id="preset-4" data-preset="версия 2.0 / тест-1" class="preset-btn px-3 py-1.5 text-xs font-medium text-slate-300 bg-[#111827] hover:bg-slate-800 border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">версия 2.0 / тест-1</button>
           <button type="button" id="btn-strip-brackets" class="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-slate-200 bg-[#111827] border border-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">
             Декод без [..]
           </button>
@@ -143,7 +194,7 @@
             <textarea id="russian-textarea" rows="6" placeholder="Введите текст на русском («привет») или английском («hello world»)..." class="w-full mt-3 bg-transparent text-base text-slate-100 placeholder-slate-500 focus:outline-none resize-y leading-relaxed">привет как дела</textarea>
           </div>
           <div class="pt-3 mt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-            <span id="ui-left-footer">Ввод на русском (А–Я) и английском (A–Z)</span>
+            <span id="ui-left-footer">Ввод на русском (А–Я), английском (A–Z) и цифрах (0–9)</span>
             <span id="ru-word-count" class="font-mono tabular-nums">Слов: 3</span>
           </div>
         </div>
@@ -151,21 +202,21 @@
         <div id="pane-custom" class="bg-[#111827] border border-slate-800 rounded-xl p-5 flex flex-col justify-between transition-colors">
           <div>
             <div class="flex items-center justify-between gap-4 pb-3 border-b border-slate-800">
-              <label for="custom-textarea" id="ui-right-title" class="text-sm font-semibold text-blue-300">
-                Кастомная раскладка (РУС q1..;6 · EN !q../m)
+              <label for="custom-textarea" id="ui-right-title" class="text-sm font-semibold text-amber-300">
+                Раскладка rtc2 code — Сложный (4 симв.: А=q1#a · A=!1Qa · 0=~0n!)
               </label>
               <div class="flex items-center gap-2">
-                <span id="custom-char-count" class="text-xs font-mono text-slate-400 tabular-nums">28 симв.</span>
+                <span id="custom-char-count" class="text-xs font-mono text-slate-400 tabular-nums">54 симв.</span>
                 <button type="button" id="btn-copy-custom" class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer">
                   Копировать раскладку
                 </button>
               </div>
             </div>
-            <textarea id="custom-textarea" rows="6" placeholder="Введите или вставьте код раскладки (напр. h(j)o9e3y6l+ или *i%t+s+s[g)..." class="w-full mt-3 bg-transparent font-mono text-base text-blue-200 placeholder-slate-500 focus:outline-none resize-y leading-relaxed">h(j)o9e3y6l+ a$q1a$ t5y6s%q1</textarea>
+            <textarea id="custom-textarea" rows="6" placeholder="Введите или вставьте 4-символьный код rtc2 code (напр. j7|sk8:tp0+ke3%cy6*fz0&quot;v)..." class="w-full mt-3 bg-transparent font-mono text-base text-blue-200 placeholder-slate-500 focus:outline-none resize-y leading-relaxed">j7|sk8:tp0+ke3%cy6*fz0"v s2=mq1#as2=m t5&ey6*fd3[nq1#a</textarea>
           </div>
           <div class="pt-3 mt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-            <span id="ui-right-footer">Поддержка РУС (33), EN (26), пробела/«_» и скобок [2], [/], [.]</span>
-            <span id="ui-right-ratio" class="font-mono text-blue-400 tabular-nums">2 симв. = 1 буква</span>
+            <span id="ui-right-footer">Поддержка РУС (33), EN (26), цифр/знаков (13) и разделителя «__» / пробела</span>
+            <span id="ui-right-ratio" class="font-mono text-amber-400 tabular-nums">4 симв. = 1 знак (rtc2 code · Сложный)</span>
           </div>
         </div>
       </div>
@@ -176,51 +227,52 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
         <div>
           <h2 id="ui-token-title" class="text-base font-semibold text-slate-100 tracking-tight">
-            Посимвольный разбор пар (РУС + АНГЛ ↔ КАСТОМ)
+            Посимвольный разбор блоков (РУС + АНГЛ ↔ КАСТОМ)
           </h2>
           <p id="ui-token-subtitle" class="text-xs text-slate-400 mt-0.5">
-            Наведите курсор на любую пару, чтобы подсветить соответствующую русскую или английскую клавишу в таблице.
+            Наведите курсор на любой блок, чтобы подсветить соответствующую клавишу в интерактивной таблице.
           </p>
         </div>
         <div id="token-counts" class="flex items-center gap-2 text-xs text-slate-400 font-mono tabular-nums">
-          РУС: 13 · EN: 0 · Пробелов: 2 · Скобки [..]: 0
+          РУС: 13 · EN: 0 · Цифры/Знаки: 0 · Пробелов: 2
         </div>
       </div>
       <div id="token-stream-list" class="mt-4 flex flex-wrap items-center gap-1.5 max-h-56 overflow-y-auto pr-1"></div>
     </section>
 
-    <!-- Interactive 59-Key Cipher Matrix -->
+    <!-- Interactive Cipher Matrix -->
     <section id="cipher-table" class="bg-[#111827] border border-slate-800 rounded-xl p-6">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-800">
         <div>
           <h2 id="ui-matrix-title" class="text-lg font-semibold text-slate-100 tracking-tight">
-            Интерактивная таблица раскладки (РУС 33 + АНГЛ 26 = 59 клавиш)
+            Интерактивная таблица: rtc2 code — Сложный (РУС 33 + АНГЛ 26 + ЦИФРЫ/ЗНАКИ 13 = 72 клавиши)
           </h2>
           <p id="ui-matrix-subtitle" class="text-sm text-slate-400 mt-1">
-            Нажмите на любую русскую или английскую клавишу в таблице, чтобы вставить символ в поле ввода.
+            Нажмите на любую клавишу в таблице, чтобы вставить символ или код в активное поле ввода.
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-          <div class="flex items-center gap-1 p-1 bg-[#0b0f17] border border-slate-800 rounded-lg">
-            <button type="button" id="filter-all" data-lang="all" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer">Все 59 (РУС + EN)</button>
-            <button type="button" id="filter-ru" data-lang="ru" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">Русский (33 · А=q1…Я=;6)</button>
-            <button type="button" id="filter-en" data-lang="en" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">English (26 · A=!q…Z=/m)</button>
+          <div class="flex flex-wrap items-center gap-1 p-1 bg-[#0b0f17] border border-slate-800 rounded-lg">
+            <button type="button" id="filter-all" data-lang="all" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 bg-slate-800 text-white cursor-pointer">Все 72 (rtc2 code)</button>
+            <button type="button" id="filter-ru" data-lang="ru" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">Русский (33)</button>
+            <button type="button" id="filter-en" data-lang="en" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">English (26)</button>
+            <button type="button" id="filter-sym" data-lang="sym" class="lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 text-slate-400 hover:text-slate-200 cursor-pointer">Цифры и знаки (13)</button>
           </div>
-          <input type="text" id="matrix-search" placeholder="Поиск буквы или кода (п, h(, a, !q)..." class="px-3 py-1.5 text-xs bg-[#0b0f17] border border-slate-800 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-64" />
+          <input type="text" id="matrix-search" placeholder="Поиск буквы, цифры или кода (п, j7|s, h(, a, !1Qa)..." class="px-3 py-1.5 text-xs bg-[#0b0f17] border border-slate-800 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 w-64" />
         </div>
       </div>
       <div id="matrix-content" class="mt-5 space-y-5"></div>
       <div class="mt-6 pt-4 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-400">
         <div class="flex flex-wrap items-center gap-2">
           <span id="ui-rules-label" class="text-slate-300 font-medium">Правила:</span>
-          <span id="ui-rule-ru">РУС: А=q1 … Я=;6</span>
+          <span id="ui-rule-ru">РУС: А=q1#a … Я=u3&j (4 симв.)</span>
           <span>·</span>
-          <span id="ui-rule-en">АНГЛ: A=!q … Z=/m</span>
+          <span id="ui-rule-en">АНГЛ: A=!1Qa … Z=?6Mb (4 симв.)</span>
           <span>·</span>
-          <span id="ui-rule-tags">Цифры и знаки в скобках: [2], [/], [.]</span>
+          <span id="ui-rule-tags">Цифры 0–9 (~0n!…~9a)), знаки . / - (.0p_, /0l+, -0o=), пробел «__»</span>
         </div>
         <div id="matrix-shown-count" class="font-mono text-slate-400 tabular-nums shrink-0">
-          Показано: 59 из 59
+          Показано: 72 из 72
         </div>
       </div>
     </section>
@@ -233,10 +285,10 @@
             Журнал сохранённых фраз
           </h2>
           <p id="ui-history-subtitle" class="text-xs text-slate-400 mt-0.5">
-            Быстрое переключение между часто используемыми русскими и английскими фразами на вашей раскладке.
+            Быстрое переключение между сохранёнными фразами в лёгкой раскладке и сложной раскладке rtc2 code.
           </p>
         </div>
-        <span id="history-count" class="text-xs font-mono text-slate-400 tabular-nums">Записей: 2</span>
+        <span id="history-count" class="text-xs font-mono text-slate-400 tabular-nums">Записей: 3</span>
       </div>
       <div class="mt-4 overflow-x-auto">
         <table class="w-full text-left border-collapse">
@@ -244,7 +296,7 @@
             <tr class="border-b border-slate-800 text-xs text-slate-400">
               <th id="th-text" class="py-2.5 pr-4 font-medium">Текст (РУС / EN)</th>
               <th id="th-custom" class="py-2.5 px-4 font-medium">Запись на кастомной раскладке</th>
-              <th id="th-tag" class="py-2.5 px-4 font-medium">Метка</th>
+              <th id="th-tag" class="py-2.5 px-4 font-medium">Раскладка / Метка</th>
               <th id="th-actions" class="py-2.5 pl-4 font-medium text-right">Действия</th>
             </tr>
           </thead>
@@ -261,7 +313,7 @@
             Системная инструкция и экспорт для нейросети
           </h2>
           <p id="ui-spec-subtitle" class="text-xs text-slate-400 mt-1">
-            Готовый блок системной инструкции с таблицами РУС (33) + АНГЛ (26) и вашим текущим закодированным сообщением.
+            Готовый блок системной инструкции для выбранной раскладки (Старый 2-симв. или rtc2 code 4-симв.) с вашим сообщением.
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-2.5">
@@ -276,8 +328,8 @@
       <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div class="bg-[#0b0f17] border border-slate-800 rounded-lg p-4">
           <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
-            <span id="ui-spec-left" class="font-medium text-slate-300">Таблица и правила (РУС 33 + АНГЛ 26)</span>
-            <span class="font-mono tabular-nums">59</span>
+            <span id="ui-spec-left" class="font-medium text-slate-300">Таблица и правила: rtc2 code — Сложный (72 клавиши · 4 симв.)</span>
+            <span id="ui-spec-count" class="font-mono tabular-nums">72</span>
           </div>
           <pre id="spec-static-box" class="text-xs font-mono text-slate-300 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto"></pre>
         </div>
@@ -291,7 +343,7 @@
           </div>
           <div class="mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-400 flex items-center justify-between">
             <span id="ui-spec-ready">Готово к отправке в чат или промпт</span>
-            <span id="ui-spec-badge" class="font-mono text-slate-300">РУС + EN ↔ КАСТОМ (59 пар)</span>
+            <span id="ui-spec-badge" class="font-mono text-slate-300">rtc2 code · Сложный (72 кода · 4 симв.)</span>
           </div>
         </div>
       </div>
@@ -300,17 +352,26 @@
 
   <footer class="border-t border-slate-800/80 py-5 px-6 text-xs text-slate-500">
     <div class="max-w-[1320px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-      <span id="ui-footer-left">Переводчик кастомной раскладки · 59 символов (РУС А=q1…Я=;6 · АНГЛ A=!q…Z=/m)</span>
-      <span id="ui-footer-right" class="font-mono tabular-nums">Поддержка разделителей « » / «_» и скобок [2], [/], [.]</span>
+      <span id="ui-footer-left">Переводчик кастомных раскладок · Старый код (Лёгкий, 2 симв., 59 клавиш) и rtc2 code (Сложный, 4 симв., 72 клавиши)</span>
+      <span id="ui-footer-right" class="font-mono tabular-nums">Поддержка разделителей « » / «_» / «__» и цифр/спецсимволов</span>
     </div>
   </footer>
 
   <script>
+    // Old 2-char layout (rtc1)
     const CIPHER_TABLE = [{"lang":"ru","ruUpper":"А","ruLower":"а","code":"q1","rowGroup":"row1","position":1},{"lang":"ru","ruUpper":"Б","ruLower":"б","code":"w2","rowGroup":"row1","position":2},{"lang":"ru","ruUpper":"В","ruLower":"в","code":"e3","rowGroup":"row1","position":3},{"lang":"ru","ruUpper":"Г","ruLower":"г","code":"r4","rowGroup":"row1","position":4},{"lang":"ru","ruUpper":"Д","ruLower":"д","code":"t5","rowGroup":"row1","position":5},{"lang":"ru","ruUpper":"Е","ruLower":"е","code":"y6","rowGroup":"row1","position":6},{"lang":"ru","ruUpper":"Ё","ruLower":"ё","code":"y0","rowGroup":"row1","position":7},{"lang":"ru","ruUpper":"Ж","ruLower":"ж","code":"u7","rowGroup":"row1","position":8},{"lang":"ru","ruUpper":"З","ruLower":"з","code":"i8","rowGroup":"row1","position":9},{"lang":"ru","ruUpper":"И","ruLower":"и","code":"o9","rowGroup":"row1","position":10},{"lang":"ru","ruUpper":"Й","ruLower":"й","code":"p0","rowGroup":"row1","position":11},{"lang":"ru","ruUpper":"К","ruLower":"к","code":"a$","rowGroup":"row2","position":12},{"lang":"ru","ruUpper":"Л","ruLower":"л","code":"s%","rowGroup":"row2","position":13},{"lang":"ru","ruUpper":"М","ruLower":"м","code":"d^","rowGroup":"row2","position":14},{"lang":"ru","ruUpper":"Н","ruLower":"н","code":"f&","rowGroup":"row2","position":15},{"lang":"ru","ruUpper":"О","ruLower":"о","code":"g*","rowGroup":"row2","position":16},{"lang":"ru","ruUpper":"П","ruLower":"п","code":"h(","rowGroup":"row2","position":17},{"lang":"ru","ruUpper":"Р","ruLower":"р","code":"j)","rowGroup":"row2","position":18},{"lang":"ru","ruUpper":"С","ruLower":"с","code":"k_","rowGroup":"row2","position":19},{"lang":"ru","ruUpper":"Т","ruLower":"т","code":"l+","rowGroup":"row2","position":20},{"lang":"ru","ruUpper":"У","ruLower":"у","code":"z=","rowGroup":"row3","position":21},{"lang":"ru","ruUpper":"Ф","ruLower":"ф","code":"x[","rowGroup":"row3","position":22},{"lang":"ru","ruUpper":"Х","ruLower":"х","code":"c]","rowGroup":"row3","position":23},{"lang":"ru","ruUpper":"Ц","ruLower":"ц","code":"v{","rowGroup":"row3","position":24},{"lang":"ru","ruUpper":"Ч","ruLower":"ч","code":"b}","rowGroup":"row3","position":25},{"lang":"ru","ruUpper":"Ш","ruLower":"ш","code":"n|","rowGroup":"row3","position":26},{"lang":"ru","ruUpper":"Щ","ruLower":"щ","code":"m~","rowGroup":"row3","position":27},{"lang":"ru","ruUpper":"Ъ","ruLower":"ъ","code":"<1","rowGroup":"row3","position":28},{"lang":"ru","ruUpper":"Ы","ruLower":"ы","code":">2","rowGroup":"row3","position":29},{"lang":"ru","ruUpper":"Ь","ruLower":"ь","code":"?3","rowGroup":"row3","position":30},{"lang":"ru","ruUpper":"Э","ruLower":"э","code":"/4","rowGroup":"row3","position":31},{"lang":"ru","ruUpper":"Ю","ruLower":"ю","code":":5","rowGroup":"row3","position":32},{"lang":"ru","ruUpper":"Я","ruLower":"я","code":";6","rowGroup":"row3","position":33}];
     const EN_CIPHER_TABLE = [{"lang":"en","ruUpper":"A","ruLower":"a","code":"!q","rowGroup":"en1","position":1},{"lang":"en","ruUpper":"B","ruLower":"b","code":"@w","rowGroup":"en1","position":2},{"lang":"en","ruUpper":"C","ruLower":"c","code":"#e","rowGroup":"en1","position":3},{"lang":"en","ruUpper":"D","ruLower":"d","code":"$r","rowGroup":"en1","position":4},{"lang":"en","ruUpper":"E","ruLower":"e","code":"%t","rowGroup":"en1","position":5},{"lang":"en","ruUpper":"F","ruLower":"f","code":"^y","rowGroup":"en1","position":6},{"lang":"en","ruUpper":"G","ruLower":"g","code":"&u","rowGroup":"en1","position":7},{"lang":"en","ruUpper":"H","ruLower":"h","code":"*i","rowGroup":"en1","position":8},{"lang":"en","ruUpper":"I","ruLower":"i","code":"(o","rowGroup":"en1","position":9},{"lang":"en","ruUpper":"J","ruLower":"j","code":")p","rowGroup":"en1","position":10},{"lang":"en","ruUpper":"K","ruLower":"k","code":"_a","rowGroup":"en2","position":11},{"lang":"en","ruUpper":"L","ruLower":"l","code":"+s","rowGroup":"en2","position":12},{"lang":"en","ruUpper":"M","ruLower":"m","code":"-d","rowGroup":"en2","position":13},{"lang":"en","ruUpper":"N","ruLower":"n","code":"=f","rowGroup":"en2","position":14},{"lang":"en","ruUpper":"O","ruLower":"o","code":"[g","rowGroup":"en2","position":15},{"lang":"en","ruUpper":"P","ruLower":"p","code":"]h","rowGroup":"en2","position":16},{"lang":"en","ruUpper":"Q","ruLower":"q","code":"{j","rowGroup":"en2","position":17},{"lang":"en","ruUpper":"R","ruLower":"r","code":"}k","rowGroup":"en2","position":18},{"lang":"en","ruUpper":"S","ruLower":"s","code":"|l","rowGroup":"en2","position":19},{"lang":"en","ruUpper":"T","ruLower":"t","code":";z","rowGroup":"en3","position":20},{"lang":"en","ruUpper":"U","ruLower":"u","code":":x","rowGroup":"en3","position":21},{"lang":"en","ruUpper":"V","ruLower":"v","code":"'c","rowGroup":"en3","position":22},{"lang":"en","ruUpper":"W","ruLower":"w","code":"\"v","rowGroup":"en3","position":23},{"lang":"en","ruUpper":"X","ruLower":"x","code":",b","rowGroup":"en3","position":24},{"lang":"en","ruUpper":"Y","ruLower":"y","code":".n","rowGroup":"en3","position":25},{"lang":"en","ruUpper":"Z","ruLower":"z","code":"/m","rowGroup":"en3","position":26}];
     const ALL_ENTRIES = [{"lang":"ru","ruUpper":"А","ruLower":"а","code":"q1","rowGroup":"row1","position":1},{"lang":"ru","ruUpper":"Б","ruLower":"б","code":"w2","rowGroup":"row1","position":2},{"lang":"ru","ruUpper":"В","ruLower":"в","code":"e3","rowGroup":"row1","position":3},{"lang":"ru","ruUpper":"Г","ruLower":"г","code":"r4","rowGroup":"row1","position":4},{"lang":"ru","ruUpper":"Д","ruLower":"д","code":"t5","rowGroup":"row1","position":5},{"lang":"ru","ruUpper":"Е","ruLower":"е","code":"y6","rowGroup":"row1","position":6},{"lang":"ru","ruUpper":"Ё","ruLower":"ё","code":"y0","rowGroup":"row1","position":7},{"lang":"ru","ruUpper":"Ж","ruLower":"ж","code":"u7","rowGroup":"row1","position":8},{"lang":"ru","ruUpper":"З","ruLower":"з","code":"i8","rowGroup":"row1","position":9},{"lang":"ru","ruUpper":"И","ruLower":"и","code":"o9","rowGroup":"row1","position":10},{"lang":"ru","ruUpper":"Й","ruLower":"й","code":"p0","rowGroup":"row1","position":11},{"lang":"ru","ruUpper":"К","ruLower":"к","code":"a$","rowGroup":"row2","position":12},{"lang":"ru","ruUpper":"Л","ruLower":"л","code":"s%","rowGroup":"row2","position":13},{"lang":"ru","ruUpper":"М","ruLower":"м","code":"d^","rowGroup":"row2","position":14},{"lang":"ru","ruUpper":"Н","ruLower":"н","code":"f&","rowGroup":"row2","position":15},{"lang":"ru","ruUpper":"О","ruLower":"о","code":"g*","rowGroup":"row2","position":16},{"lang":"ru","ruUpper":"П","ruLower":"п","code":"h(","rowGroup":"row2","position":17},{"lang":"ru","ruUpper":"Р","ruLower":"р","code":"j)","rowGroup":"row2","position":18},{"lang":"ru","ruUpper":"С","ruLower":"с","code":"k_","rowGroup":"row2","position":19},{"lang":"ru","ruUpper":"Т","ruLower":"т","code":"l+","rowGroup":"row2","position":20},{"lang":"ru","ruUpper":"У","ruLower":"у","code":"z=","rowGroup":"row3","position":21},{"lang":"ru","ruUpper":"Ф","ruLower":"ф","code":"x[","rowGroup":"row3","position":22},{"lang":"ru","ruUpper":"Х","ruLower":"х","code":"c]","rowGroup":"row3","position":23},{"lang":"ru","ruUpper":"Ц","ruLower":"ц","code":"v{","rowGroup":"row3","position":24},{"lang":"ru","ruUpper":"Ч","ruLower":"ч","code":"b}","rowGroup":"row3","position":25},{"lang":"ru","ruUpper":"Ш","ruLower":"ш","code":"n|","rowGroup":"row3","position":26},{"lang":"ru","ruUpper":"Щ","ruLower":"щ","code":"m~","rowGroup":"row3","position":27},{"lang":"ru","ruUpper":"Ъ","ruLower":"ъ","code":"<1","rowGroup":"row3","position":28},{"lang":"ru","ruUpper":"Ы","ruLower":"ы","code":">2","rowGroup":"row3","position":29},{"lang":"ru","ruUpper":"Ь","ruLower":"ь","code":"?3","rowGroup":"row3","position":30},{"lang":"ru","ruUpper":"Э","ruLower":"э","code":"/4","rowGroup":"row3","position":31},{"lang":"ru","ruUpper":"Ю","ruLower":"ю","code":":5","rowGroup":"row3","position":32},{"lang":"ru","ruUpper":"Я","ruLower":"я","code":";6","rowGroup":"row3","position":33},{"lang":"en","ruUpper":"A","ruLower":"a","code":"!q","rowGroup":"en1","position":1},{"lang":"en","ruUpper":"B","ruLower":"b","code":"@w","rowGroup":"en1","position":2},{"lang":"en","ruUpper":"C","ruLower":"c","code":"#e","rowGroup":"en1","position":3},{"lang":"en","ruUpper":"D","ruLower":"d","code":"$r","rowGroup":"en1","position":4},{"lang":"en","ruUpper":"E","ruLower":"e","code":"%t","rowGroup":"en1","position":5},{"lang":"en","ruUpper":"F","ruLower":"f","code":"^y","rowGroup":"en1","position":6},{"lang":"en","ruUpper":"G","ruLower":"g","code":"&u","rowGroup":"en1","position":7},{"lang":"en","ruUpper":"H","ruLower":"h","code":"*i","rowGroup":"en1","position":8},{"lang":"en","ruUpper":"I","ruLower":"i","code":"(o","rowGroup":"en1","position":9},{"lang":"en","ruUpper":"J","ruLower":"j","code":")p","rowGroup":"en1","position":10},{"lang":"en","ruUpper":"K","ruLower":"k","code":"_a","rowGroup":"en2","position":11},{"lang":"en","ruUpper":"L","ruLower":"l","code":"+s","rowGroup":"en2","position":12},{"lang":"en","ruUpper":"M","ruLower":"m","code":"-d","rowGroup":"en2","position":13},{"lang":"en","ruUpper":"N","ruLower":"n","code":"=f","rowGroup":"en2","position":14},{"lang":"en","ruUpper":"O","ruLower":"o","code":"[g","rowGroup":"en2","position":15},{"lang":"en","ruUpper":"P","ruLower":"p","code":"]h","rowGroup":"en2","position":16},{"lang":"en","ruUpper":"Q","ruLower":"q","code":"{j","rowGroup":"en2","position":17},{"lang":"en","ruUpper":"R","ruLower":"r","code":"}k","rowGroup":"en2","position":18},{"lang":"en","ruUpper":"S","ruLower":"s","code":"|l","rowGroup":"en2","position":19},{"lang":"en","ruUpper":"T","ruLower":"t","code":";z","rowGroup":"en3","position":20},{"lang":"en","ruUpper":"U","ruLower":"u","code":":x","rowGroup":"en3","position":21},{"lang":"en","ruUpper":"V","ruLower":"v","code":"'c","rowGroup":"en3","position":22},{"lang":"en","ruUpper":"W","ruLower":"w","code":"\"v","rowGroup":"en3","position":23},{"lang":"en","ruUpper":"X","ruLower":"x","code":",b","rowGroup":"en3","position":24},{"lang":"en","ruUpper":"Y","ruLower":"y","code":".n","rowGroup":"en3","position":25},{"lang":"en","ruUpper":"Z","ruLower":"z","code":"/m","rowGroup":"en3","position":26}];
     const SYSTEM_SPEC = "=== ПРАВИЛА ДЕКОДИРОВАНИЯ ===\nДанная таблица представляет собой двуязычный шифр подстановки. Каждая буква русского или английского алфавита заменяется уникальной парой символов, указанной после знака равенства. Для чтения текста необходимо сопоставить пары символов с исходными буквами.\n\n=== РУССКИЙ АЛФАВИТ ===\nА = q1\nБ = w2\nВ = e3\nГ = r4\nД = t5\nЕ = y6\nЁ = y0\nЖ = u7\nЗ = i8\nИ = o9\nЙ = p0\nК = a$\nЛ = s%\nМ = d^\nН = f&\nО = g*\nП = h(\nР = j)\nС = k_\nТ = l+\nУ = z=\nФ = x[\nХ = c]\nЦ = v{\nЧ = b}\nШ = n|\nЩ = m~\nЪ = <1\nЫ = >2\nЬ = ?3\nЭ = /4\nЮ = :5\nЯ = ;6\n\n=== АНГЛИЙСКИЙ АЛФАВИТ ===\nA = !q\nB = @w\nC = #e\nD = $r\nE = %t\nF = ^y\nG = &u\nH = *i\nI = (o\nJ = )p\nK = _a\nL = +s\nM = -d\nN = =f\nO = [g\nP = ]h\nQ = {j\nR = }k\nS = |l\nT = ;z\nU = :x\nV = 'c\nW = \"v\nX = ,b\nY = .n\nZ = /m\n\n=== ФОРМАТИРОВАНИЕ ===\n1. Словесные пробелы передаются обычным пробелом или знаком подчеркивания «_».\n2. Цифры и знаки препинания (точки, косые черты) при необходимости заключаются в квадратные скобки, чтобы не смешиваться с кодом букв: [2], [/], [.].";
-    const I18N = {"ru":{"brand":"Model AI","navTranslator":"Переводчик","navTokens":"Разбор пар","navMatrix":"Таблица (59)","navPrompt":"Системный промпт","navGithub":"Сайт github.io","copyMainBtn":"Копировать перевод","copiedMainBtn":"Результат скопирован","heroTitle":"Model AI · 500 млн параметров · 4 шарда GitHub Codespaces · Контекст 50 млн (РУС + EN)","heroSubtitle":"Собственная нейросеть Model AI (500 661 696 параметров, 4 связанных сервера Codespaces по 125.17M весов, контекст 50 000 000 токенов) и двусторонний переводчик: «привет» → «h(j)o9e3y6l+», «hello» → «*i%t+s+s[g».","dirTextToCustom":"ТЕКСТ → КАСТОМ","dirCustomToText":"КАСТОМ → ТЕКСТ","swapDirTitle":"Переключить направление перевода","enModeCipher":"EN Шифр (!q../m)","enModeTranslit":"EN Транслит (q1..;6)","enModeBrackets":"Теги [lat]","sepSpace":"Пробел « »","sepUnderscore":"Символ «_»","quickExamples":"Быстрые примеры:","preset1Label":"привет (РУС)","preset2Label":"hello world (EN шифр)","preset3Label":"привет как дела + hello","preset4Label":"скобки [2], [/], [.]","decodeNoBrackets":"Декод без [..]","decodeWithBrackets":"Декод с [..]","saveToHistory":"Сохранить в журнал","clearBoth":"Очистить оба поля","leftPaneTitle":"Русский и Английский (Текст / Декод)","leftPlaceholder":"Введите текст на русском («привет») или английском («hello world»)...","leftFooterHint":"Ввод на русском (А–Я) и английском (A–Z)","wordsCount":"Слов","charsCount":"симв.","copyTextBtn":"Копировать текст","copiedBtn":"Скопировано","rightPaneTitle":"Кастомная раскладка (РУС q1..;6 · EN !q../m)","rightPlaceholder":"Введите или вставьте код раскладки (напр. h(j)o9e3y6l+ или *i%t+s+s[g)...","rightFooterHint":"Поддержка РУС (33), EN (26), пробела/«_» и скобок [2], [/], [.]","rightRatioHint":"2 симв. = 1 буква","copyLayoutBtn":"Копировать раскладку","tokenTitle":"Посимвольный разбор пар (РУС + АНГЛ ↔ КАСТОМ)","tokenSubtitle":"Наведите курсор на любую пару, чтобы подсветить соответствующую русскую или английскую клавишу в таблице.","tokenRuCount":"РУС","tokenEnCount":"EN","tokenSpaceCount":"Пробелов","tokenTagCount":"Скобки [..]","tokenEmpty":"Введите текст на русском или английском выше, чтобы увидеть посимвольное сопоставление каждой буквы и двухсимвольного кода.","tokenSeparatorLabel":"разделитель","tokenSpaceValue":"пробел","matrixTitle":"Интерактивная таблица раскладки (РУС 33 + АНГЛ 26 = 59 клавиш)","matrixSubtitle":"Нажмите на любую русскую или английскую клавишу в таблице, чтобы вставить символ в поле ввода.","matrixFilterAll":"Все 59 (РУС + EN)","matrixFilterRu":"Русский (33 · А=q1…Я=;6)","matrixFilterEn":"English (26 · A=!q…Z=/m)","matrixSearchPlaceholder":"Поиск буквы или кода (п, h(, a, !q)...","matrixNoMatches":"совпадений в таблице не найдено.","matrixResetFilter":"Сбросить фильтр","matrixKeysUnit":"клавиш","matrixRulesLabel":"Правила:","matrixRuleRu":"РУС: А=q1 … Я=;6","matrixRuleEn":"АНГЛ: A=!q … Z=/m","matrixRuleTags":"Цифры и знаки в скобках: [2], [/], [.]","matrixShown":"Показано","matrixOf":"из","rowLabels":{"row1":"РУС · Верхний ряд (А–Й · q1–p0)","row2":"РУС · Средний ряд (К–Т · a$–l+)","row3":"РУС · Нижний ряд (У–Я · z=–;6)","en1":"EN · Верхний ряд (A–J · !q–)p)","en2":"EN · Средний ряд (K–S · _a–|l)","en3":"EN · Нижний ряд (T–Z · ;z–/m)"},"historyTitle":"Журнал сохранённых фраз","historySubtitle":"Быстрое переключение между часто используемыми русскими и английскими фразами на вашей раскладке.","historyCountLabel":"Записей","historyEmpty":"Журнал пуст. Нажмите «Сохранить в журнал», чтобы закрепить текущий перевод.","historyColText":"Текст (РУС / EN)","historyColCustom":"Запись на кастомной раскладке","historyColTag":"Метка","historyColActions":"Действия","historyLoadBtn":"Загрузить","specTitle":"Системная инструкция и экспорт для нейросети","specSubtitle":"Готовый блок системной инструкции с таблицами подстановки (РУС + EN) и вашим текущим закодированным сообщением.","specCopyOnlyBtn":"Копировать только таблицу","specCopiedOnlyBtn":"Инструкция скопирована","specCopyBundleBtn":"Копировать инструкцию + ваш текст","specCopiedBundleBtn":"Промпт + текст скопированы","specLeftLabel":"Таблица и правила (РУС 33 + АНГЛ 26)","specRightLabel":"Предпросмотр полного промпта с вашим запросом","specReadyHint":"Готово к отправке в чат или промпт","specPairsBadge":"РУС + EN ↔ КАСТОМ (59 пар)","ghTitle":"Автодеплой полного интерфейса (1:1) на GitHub Pages (github.io)","ghSubtitle":"Публикация точной копии всего интерфейса (с переключателем языка сайта RU/EN) на ваш github.io.","ghTab1":"1. Права и Автодеплой","ghTab2":"2. Полный index.html (1:1)","ghTab3":"3. Git + Actions","ghUserLabel":"Ваш логин GitHub","ghRepoLabel":"Имя репозитория","ghTargetUrlLabel":"Целевой адрес сайта (URL):","ghAutoTitle":"Автоматическая публикация через переменную GITHUB_TOKEN","ghAutoDesc":"Сервер сам создаёт или обновляет репозиторий, заливает полный 1:1 интерфейс (RU/EN) в index.html и включает GitHub Pages.","ghCheckTokenBtn":"Проверить GITHUB_TOKEN","ghDeployNowBtn":"Опубликовать на github.io сейчас","ghDeployingBtn":"Публикация на github.io...","ghDownloadHtmlBtn":"Скачать полный index.html","ghCopyHtmlBtn":"Скопировать весь код index.html","ghCopiedHtmlBtn":"HTML-код скопирован","footerLeft":"Переводчик кастомной раскладки · 59 символов (РУС А=q1…Я=;6 · АНГЛ A=!q…Z=/m)","footerRight":"Поддержка разделителей « » / «_» и скобок [2], [/], [.]"},"en":{"brand":"Model AI","navTranslator":"Translator","navTokens":"Token Breakdown","navMatrix":"Cipher Table (59)","navPrompt":"AI System Prompt","navGithub":"github.io Site","copyMainBtn":"Copy Translation","copiedMainBtn":"Copied to Clipboard","heroTitle":"Model AI · 500M Parameters · 4 Codespaces Shards · 50M Context (RU + EN)","heroSubtitle":"Our custom-trained Model AI (500,661,696 parameters, 4 linked GitHub Codespaces shards at 125.17M weights each, 50,000,000-token context window) paired with real-time bilingual cipher translation (\"hello\" → \"*i%t+s+s[g\", \"привет\" → \"h(j)o9e3y6l+\").","dirTextToCustom":"TEXT → CUSTOM","dirCustomToText":"CUSTOM → TEXT","swapDirTitle":"Swap translation direction","enModeCipher":"EN Cipher (!q../m)","enModeTranslit":"EN Translit (q1..;6)","enModeBrackets":"Tags [lat]","sepSpace":"Space \" \"","sepUnderscore":"Symbol \"_\"","quickExamples":"Quick examples:","preset1Label":"привет (RU)","preset2Label":"hello world (EN cipher)","preset3Label":"привет как дела + hello","preset4Label":"brackets [2], [/], [.]","decodeNoBrackets":"Decode without [..]","decodeWithBrackets":"Decode keeping [..]","saveToHistory":"Save to Log","clearBoth":"Clear Both","leftPaneTitle":"Russian & English (Source Text / Decoded)","leftPlaceholder":"Type text in English (\"hello world\") or Russian (\"привет\")...","leftFooterHint":"Direct input in English (A–Z) and Russian (А–Я)","wordsCount":"Words","charsCount":"chars","copyTextBtn":"Copy Text","copiedBtn":"Copied","rightPaneTitle":"Custom Layout Cipher (RU q1..;6 · EN !q../m)","rightPlaceholder":"Type or paste custom layout code (e.g. *i%t+s+s[g or h(j)o9e3y6l+)...","rightFooterHint":"Supports RU (33), EN (26), space/\"_\" & [2], [/], [.]","rightRatioHint":"2 chars = 1 letter","copyLayoutBtn":"Copy Layout","tokenTitle":"Character-by-Character Token Breakdown (RU + EN ↔ CUSTOM)","tokenSubtitle":"Hover over any token pair to highlight the matching Russian or English key in the cipher table.","tokenRuCount":"RU","tokenEnCount":"EN","tokenSpaceCount":"Spaces","tokenTagCount":"Brackets [..]","tokenEmpty":"Enter text in English or Russian above to inspect the character-to-code mapping.","tokenSeparatorLabel":"separator","tokenSpaceValue":"space","matrixTitle":"Interactive Cipher Table (RU 33 + EN 26 = 59 Keys)","matrixSubtitle":"Click any Russian or English key in the matrix to insert that symbol into the active input pane.","matrixFilterAll":"All 59 (RU + EN)","matrixFilterRu":"Russian (33 · А=q1…Я=;6)","matrixFilterEn":"English (26 · A=!q…Z=/m)","matrixSearchPlaceholder":"Search letter or code (a, !q, п, h()...","matrixNoMatches":"no matching keys found.","matrixResetFilter":"Reset Filter","matrixKeysUnit":"keys","matrixRulesLabel":"Rules:","matrixRuleRu":"RU: А=q1 … Я=;6","matrixRuleEn":"EN: A=!q … Z=/m","matrixRuleTags":"Digits & punctuation in brackets: [2], [/], [.]","matrixShown":"Showing","matrixOf":"of","rowLabels":{"row1":"RU · Top Row (А–Й · q1–p0)","row2":"RU · Middle Row (К–Т · a$–l+)","row3":"RU · Bottom Row (У–Я · z=–;6)","en1":"EN · Top Row (A–J · !q–)p)","en2":"EN · Middle Row (K–S · _a–|l)","en3":"EN · Bottom Row (T–Z · ;z–/m)"},"historyTitle":"Saved Phrases Log","historySubtitle":"Quickly switch between saved English and Russian phrases encoded in your custom layout.","historyCountLabel":"Entries","historyEmpty":"No saved phrases yet. Click \"Save to Log\" to store the current translation.","historyColText":"Source Text (RU / EN)","historyColCustom":"Custom Layout Code","historyColTag":"Label","historyColActions":"Actions","historyLoadBtn":"Load","specTitle":"AI System Instruction & Prompt Export","specSubtitle":"Ready-to-use system instruction block with both RU (33) + EN (26) substitution tables and your encoded message.","specCopyOnlyBtn":"Copy Table Only","specCopiedOnlyBtn":"Table Copied","specCopyBundleBtn":"Copy Instruction + Your Text","specCopiedBundleBtn":"Prompt + Text Copied","specLeftLabel":"Cipher Tables & Rules (RU 33 + EN 26)","specRightLabel":"Full AI Prompt Preview with Your Encoded Text","specReadyHint":"Ready to paste into any AI chat or prompt","specPairsBadge":"RU + EN ↔ CUSTOM (59 pairs)","ghTitle":"Auto-Deploy Full Interface (1:1) to GitHub Pages (github.io)","ghSubtitle":"Publish an exact 1:1 copy of this full interface (including RU/EN site language switcher) to your github.io.","ghTab1":"1. Permissions & Auto-Deploy","ghTab2":"2. Full index.html (1:1)","ghTab3":"3. Git + Actions","ghUserLabel":"Your GitHub Username","ghRepoLabel":"Repository Name","ghTargetUrlLabel":"Target Live Site URL:","ghAutoTitle":"Automated Deployment via GITHUB_TOKEN","ghAutoDesc":"The server automatically creates or updates the repository, commits the 1:1 full RU/EN interface into index.html, and enables GitHub Pages.","ghCheckTokenBtn":"Check GITHUB_TOKEN","ghDeployNowBtn":"Publish to github.io Now","ghDeployingBtn":"Publishing to github.io...","ghDownloadHtmlBtn":"Download Full index.html","ghCopyHtmlBtn":"Copy Full index.html Code","ghCopiedHtmlBtn":"HTML Code Copied","footerLeft":"Custom Layout Translator · 59 symbols (RU А=q1…Я=;6 · EN A=!q…Z=/m)","footerRight":"Supports \" \" / \"_\" separators and [2], [/], [.] brackets"}};
+
+    // Hard 4-char layout (rtc2 code)
+    const RTC2_RU_TABLE = [{"lang":"ru","ruUpper":"А","ruLower":"а","code":"q1#a","rowGroup":"row1","position":1},{"lang":"ru","ruUpper":"Б","ruLower":"б","code":"w2$b","rowGroup":"row1","position":2},{"lang":"ru","ruUpper":"В","ruLower":"в","code":"e3%c","rowGroup":"row1","position":3},{"lang":"ru","ruUpper":"Г","ruLower":"г","code":"r4^d","rowGroup":"row1","position":4},{"lang":"ru","ruUpper":"Д","ruLower":"д","code":"t5&e","rowGroup":"row1","position":5},{"lang":"ru","ruUpper":"Е","ruLower":"е","code":"y6*f","rowGroup":"row1","position":6},{"lang":"ru","ruUpper":"Ё","ruLower":"ё","code":"u7(g","rowGroup":"row1","position":7},{"lang":"ru","ruUpper":"Ж","ruLower":"ж","code":"i8)h","rowGroup":"row1","position":8},{"lang":"ru","ruUpper":"З","ruLower":"з","code":"o9_j","rowGroup":"row1","position":9},{"lang":"ru","ruUpper":"И","ruLower":"и","code":"p0+k","rowGroup":"row1","position":10},{"lang":"ru","ruUpper":"Й","ruLower":"й","code":"a1-l","rowGroup":"row1","position":11},{"lang":"ru","ruUpper":"К","ruLower":"к","code":"s2=m","rowGroup":"row2","position":12},{"lang":"ru","ruUpper":"Л","ruLower":"л","code":"d3[n","rowGroup":"row2","position":13},{"lang":"ru","ruUpper":"М","ruLower":"м","code":"f4]p","rowGroup":"row2","position":14},{"lang":"ru","ruUpper":"Н","ruLower":"н","code":"g5{q","rowGroup":"row2","position":15},{"lang":"ru","ruUpper":"О","ruLower":"о","code":"h6}r","rowGroup":"row2","position":16},{"lang":"ru","ruUpper":"П","ruLower":"п","code":"j7|s","rowGroup":"row2","position":17},{"lang":"ru","ruUpper":"Р","ruLower":"р","code":"k8:t","rowGroup":"row2","position":18},{"lang":"ru","ruUpper":"С","ruLower":"с","code":"l9;u","rowGroup":"row2","position":19},{"lang":"ru","ruUpper":"Т","ruLower":"т","code":"z0\"v","rowGroup":"row2","position":20},{"lang":"ru","ruUpper":"У","ruLower":"у","code":"x1'w","rowGroup":"row3","position":21},{"lang":"ru","ruUpper":"Ф","ruLower":"ф","code":"c2<x","rowGroup":"row3","position":22},{"lang":"ru","ruUpper":"Х","ruLower":"х","code":"v3>y","rowGroup":"row3","position":23},{"lang":"ru","ruUpper":"Ц","ruLower":"ц","code":"b4?z","rowGroup":"row3","position":24},{"lang":"ru","ruUpper":"Ч","ruLower":"ч","code":"n5/a","rowGroup":"row3","position":25},{"lang":"ru","ruUpper":"Ш","ruLower":"ш","code":"m6~b","rowGroup":"row3","position":26},{"lang":"ru","ruUpper":"Щ","ruLower":"щ","code":"q7!c","rowGroup":"row3","position":27},{"lang":"ru","ruUpper":"Ъ","ruLower":"ъ","code":"w8@d","rowGroup":"row3","position":28},{"lang":"ru","ruUpper":"Ы","ruLower":"ы","code":"e9#e","rowGroup":"row3","position":29},{"lang":"ru","ruUpper":"Ь","ruLower":"ь","code":"r0$f","rowGroup":"row3","position":30},{"lang":"ru","ruUpper":"Э","ruLower":"э","code":"t1%g","rowGroup":"row3","position":31},{"lang":"ru","ruUpper":"Ю","ruLower":"ю","code":"y2^h","rowGroup":"row3","position":32},{"lang":"ru","ruUpper":"Я","ruLower":"я","code":"u3&j","rowGroup":"row3","position":33}];
+    const RTC2_EN_TABLE = [{"lang":"en","ruUpper":"A","ruLower":"a","code":"!1Qa","rowGroup":"en1","position":1},{"lang":"en","ruUpper":"B","ruLower":"b","code":"@2Wb","rowGroup":"en1","position":2},{"lang":"en","ruUpper":"C","ruLower":"c","code":"#3Ec","rowGroup":"en1","position":3},{"lang":"en","ruUpper":"D","ruLower":"d","code":"$4Rd","rowGroup":"en1","position":4},{"lang":"en","ruUpper":"E","ruLower":"e","code":"%5Te","rowGroup":"en1","position":5},{"lang":"en","ruUpper":"F","ruLower":"f","code":"^6Yf","rowGroup":"en1","position":6},{"lang":"en","ruUpper":"G","ruLower":"g","code":"&7Ug","rowGroup":"en1","position":7},{"lang":"en","ruUpper":"H","ruLower":"h","code":"*8Ih","rowGroup":"en1","position":8},{"lang":"en","ruUpper":"I","ruLower":"i","code":"(9Oj","rowGroup":"en1","position":9},{"lang":"en","ruUpper":"J","ruLower":"j","code":")0Pk","rowGroup":"en1","position":10},{"lang":"en","ruUpper":"K","ruLower":"k","code":"_1Al","rowGroup":"en2","position":11},{"lang":"en","ruUpper":"L","ruLower":"l","code":"+2Sm","rowGroup":"en2","position":12},{"lang":"en","ruUpper":"M","ruLower":"m","code":"-3Dn","rowGroup":"en2","position":13},{"lang":"en","ruUpper":"N","ruLower":"n","code":"=4Fp","rowGroup":"en2","position":14},{"lang":"en","ruUpper":"O","ruLower":"o","code":"[5Gq","rowGroup":"en2","position":15},{"lang":"en","ruUpper":"P","ruLower":"p","code":"]6Hr","rowGroup":"en2","position":16},{"lang":"en","ruUpper":"Q","ruLower":"q","code":"{7Js","rowGroup":"en2","position":17},{"lang":"en","ruUpper":"R","ruLower":"r","code":"}8Kt","rowGroup":"en2","position":18},{"lang":"en","ruUpper":"S","ruLower":"s","code":"|9Lu","rowGroup":"en2","position":19},{"lang":"en","ruUpper":"T","ruLower":"t","code":":0Zv","rowGroup":"en3","position":20},{"lang":"en","ruUpper":"U","ruLower":"u","code":";1Xw","rowGroup":"en3","position":21},{"lang":"en","ruUpper":"V","ruLower":"v","code":"\"2Cx","rowGroup":"en3","position":22},{"lang":"en","ruUpper":"W","ruLower":"w","code":"'3Vy","rowGroup":"en3","position":23},{"lang":"en","ruUpper":"X","ruLower":"x","code":"<4Bz","rowGroup":"en3","position":24},{"lang":"en","ruUpper":"Y","ruLower":"y","code":">5Na","rowGroup":"en3","position":25},{"lang":"en","ruUpper":"Z","ruLower":"z","code":"?6Mb","rowGroup":"en3","position":26}];
+    const RTC2_SYM_TABLE = [{"lang":"sym","ruUpper":"0","ruLower":"0","code":"~0n!","rowGroup":"sym1","position":1},{"lang":"sym","ruUpper":"1","ruLower":"1","code":"~1m@","rowGroup":"sym1","position":2},{"lang":"sym","ruUpper":"2","ruLower":"2","code":"~2k#","rowGroup":"sym1","position":3},{"lang":"sym","ruUpper":"3","ruLower":"3","code":"~3j$","rowGroup":"sym1","position":4},{"lang":"sym","ruUpper":"4","ruLower":"4","code":"~4h%","rowGroup":"sym1","position":5},{"lang":"sym","ruUpper":"5","ruLower":"5","code":"~5g^","rowGroup":"sym1","position":6},{"lang":"sym","ruUpper":"6","ruLower":"6","code":"~6f&","rowGroup":"sym1","position":7},{"lang":"sym","ruUpper":"7","ruLower":"7","code":"~7d*","rowGroup":"sym1","position":8},{"lang":"sym","ruUpper":"8","ruLower":"8","code":"~8s(","rowGroup":"sym1","position":9},{"lang":"sym","ruUpper":"9","ruLower":"9","code":"~9a)","rowGroup":"sym1","position":10},{"lang":"sym","ruUpper":".","ruLower":".","code":".0p_","rowGroup":"sym1","position":11},{"lang":"sym","ruUpper":"/","ruLower":"/","code":"/0l+","rowGroup":"sym1","position":12},{"lang":"sym","ruUpper":"-","ruLower":"-","code":"-0o=","rowGroup":"sym1","position":13}];
+    const ALL_RTC2_ENTRIES = [{"lang":"ru","ruUpper":"А","ruLower":"а","code":"q1#a","rowGroup":"row1","position":1},{"lang":"ru","ruUpper":"Б","ruLower":"б","code":"w2$b","rowGroup":"row1","position":2},{"lang":"ru","ruUpper":"В","ruLower":"в","code":"e3%c","rowGroup":"row1","position":3},{"lang":"ru","ruUpper":"Г","ruLower":"г","code":"r4^d","rowGroup":"row1","position":4},{"lang":"ru","ruUpper":"Д","ruLower":"д","code":"t5&e","rowGroup":"row1","position":5},{"lang":"ru","ruUpper":"Е","ruLower":"е","code":"y6*f","rowGroup":"row1","position":6},{"lang":"ru","ruUpper":"Ё","ruLower":"ё","code":"u7(g","rowGroup":"row1","position":7},{"lang":"ru","ruUpper":"Ж","ruLower":"ж","code":"i8)h","rowGroup":"row1","position":8},{"lang":"ru","ruUpper":"З","ruLower":"з","code":"o9_j","rowGroup":"row1","position":9},{"lang":"ru","ruUpper":"И","ruLower":"и","code":"p0+k","rowGroup":"row1","position":10},{"lang":"ru","ruUpper":"Й","ruLower":"й","code":"a1-l","rowGroup":"row1","position":11},{"lang":"ru","ruUpper":"К","ruLower":"к","code":"s2=m","rowGroup":"row2","position":12},{"lang":"ru","ruUpper":"Л","ruLower":"л","code":"d3[n","rowGroup":"row2","position":13},{"lang":"ru","ruUpper":"М","ruLower":"м","code":"f4]p","rowGroup":"row2","position":14},{"lang":"ru","ruUpper":"Н","ruLower":"н","code":"g5{q","rowGroup":"row2","position":15},{"lang":"ru","ruUpper":"О","ruLower":"о","code":"h6}r","rowGroup":"row2","position":16},{"lang":"ru","ruUpper":"П","ruLower":"п","code":"j7|s","rowGroup":"row2","position":17},{"lang":"ru","ruUpper":"Р","ruLower":"р","code":"k8:t","rowGroup":"row2","position":18},{"lang":"ru","ruUpper":"С","ruLower":"с","code":"l9;u","rowGroup":"row2","position":19},{"lang":"ru","ruUpper":"Т","ruLower":"т","code":"z0\"v","rowGroup":"row2","position":20},{"lang":"ru","ruUpper":"У","ruLower":"у","code":"x1'w","rowGroup":"row3","position":21},{"lang":"ru","ruUpper":"Ф","ruLower":"ф","code":"c2<x","rowGroup":"row3","position":22},{"lang":"ru","ruUpper":"Х","ruLower":"х","code":"v3>y","rowGroup":"row3","position":23},{"lang":"ru","ruUpper":"Ц","ruLower":"ц","code":"b4?z","rowGroup":"row3","position":24},{"lang":"ru","ruUpper":"Ч","ruLower":"ч","code":"n5/a","rowGroup":"row3","position":25},{"lang":"ru","ruUpper":"Ш","ruLower":"ш","code":"m6~b","rowGroup":"row3","position":26},{"lang":"ru","ruUpper":"Щ","ruLower":"щ","code":"q7!c","rowGroup":"row3","position":27},{"lang":"ru","ruUpper":"Ъ","ruLower":"ъ","code":"w8@d","rowGroup":"row3","position":28},{"lang":"ru","ruUpper":"Ы","ruLower":"ы","code":"e9#e","rowGroup":"row3","position":29},{"lang":"ru","ruUpper":"Ь","ruLower":"ь","code":"r0$f","rowGroup":"row3","position":30},{"lang":"ru","ruUpper":"Э","ruLower":"э","code":"t1%g","rowGroup":"row3","position":31},{"lang":"ru","ruUpper":"Ю","ruLower":"ю","code":"y2^h","rowGroup":"row3","position":32},{"lang":"ru","ruUpper":"Я","ruLower":"я","code":"u3&j","rowGroup":"row3","position":33},{"lang":"en","ruUpper":"A","ruLower":"a","code":"!1Qa","rowGroup":"en1","position":1},{"lang":"en","ruUpper":"B","ruLower":"b","code":"@2Wb","rowGroup":"en1","position":2},{"lang":"en","ruUpper":"C","ruLower":"c","code":"#3Ec","rowGroup":"en1","position":3},{"lang":"en","ruUpper":"D","ruLower":"d","code":"$4Rd","rowGroup":"en1","position":4},{"lang":"en","ruUpper":"E","ruLower":"e","code":"%5Te","rowGroup":"en1","position":5},{"lang":"en","ruUpper":"F","ruLower":"f","code":"^6Yf","rowGroup":"en1","position":6},{"lang":"en","ruUpper":"G","ruLower":"g","code":"&7Ug","rowGroup":"en1","position":7},{"lang":"en","ruUpper":"H","ruLower":"h","code":"*8Ih","rowGroup":"en1","position":8},{"lang":"en","ruUpper":"I","ruLower":"i","code":"(9Oj","rowGroup":"en1","position":9},{"lang":"en","ruUpper":"J","ruLower":"j","code":")0Pk","rowGroup":"en1","position":10},{"lang":"en","ruUpper":"K","ruLower":"k","code":"_1Al","rowGroup":"en2","position":11},{"lang":"en","ruUpper":"L","ruLower":"l","code":"+2Sm","rowGroup":"en2","position":12},{"lang":"en","ruUpper":"M","ruLower":"m","code":"-3Dn","rowGroup":"en2","position":13},{"lang":"en","ruUpper":"N","ruLower":"n","code":"=4Fp","rowGroup":"en2","position":14},{"lang":"en","ruUpper":"O","ruLower":"o","code":"[5Gq","rowGroup":"en2","position":15},{"lang":"en","ruUpper":"P","ruLower":"p","code":"]6Hr","rowGroup":"en2","position":16},{"lang":"en","ruUpper":"Q","ruLower":"q","code":"{7Js","rowGroup":"en2","position":17},{"lang":"en","ruUpper":"R","ruLower":"r","code":"}8Kt","rowGroup":"en2","position":18},{"lang":"en","ruUpper":"S","ruLower":"s","code":"|9Lu","rowGroup":"en2","position":19},{"lang":"en","ruUpper":"T","ruLower":"t","code":":0Zv","rowGroup":"en3","position":20},{"lang":"en","ruUpper":"U","ruLower":"u","code":";1Xw","rowGroup":"en3","position":21},{"lang":"en","ruUpper":"V","ruLower":"v","code":"\"2Cx","rowGroup":"en3","position":22},{"lang":"en","ruUpper":"W","ruLower":"w","code":"'3Vy","rowGroup":"en3","position":23},{"lang":"en","ruUpper":"X","ruLower":"x","code":"<4Bz","rowGroup":"en3","position":24},{"lang":"en","ruUpper":"Y","ruLower":"y","code":">5Na","rowGroup":"en3","position":25},{"lang":"en","ruUpper":"Z","ruLower":"z","code":"?6Mb","rowGroup":"en3","position":26},{"lang":"sym","ruUpper":"0","ruLower":"0","code":"~0n!","rowGroup":"sym1","position":1},{"lang":"sym","ruUpper":"1","ruLower":"1","code":"~1m@","rowGroup":"sym1","position":2},{"lang":"sym","ruUpper":"2","ruLower":"2","code":"~2k#","rowGroup":"sym1","position":3},{"lang":"sym","ruUpper":"3","ruLower":"3","code":"~3j$","rowGroup":"sym1","position":4},{"lang":"sym","ruUpper":"4","ruLower":"4","code":"~4h%","rowGroup":"sym1","position":5},{"lang":"sym","ruUpper":"5","ruLower":"5","code":"~5g^","rowGroup":"sym1","position":6},{"lang":"sym","ruUpper":"6","ruLower":"6","code":"~6f&","rowGroup":"sym1","position":7},{"lang":"sym","ruUpper":"7","ruLower":"7","code":"~7d*","rowGroup":"sym1","position":8},{"lang":"sym","ruUpper":"8","ruLower":"8","code":"~8s(","rowGroup":"sym1","position":9},{"lang":"sym","ruUpper":"9","ruLower":"9","code":"~9a)","rowGroup":"sym1","position":10},{"lang":"sym","ruUpper":".","ruLower":".","code":".0p_","rowGroup":"sym1","position":11},{"lang":"sym","ruUpper":"/","ruLower":"/","code":"/0l+","rowGroup":"sym1","position":12},{"lang":"sym","ruUpper":"-","ruLower":"-","code":"-0o=","rowGroup":"sym1","position":13}];
+    const RTC2_SYSTEM_SPEC = "=== ПРАВИЛА ДЕКОДИРОВАНИЯ (УРОВЕНЬ 2 — 4 СИМВОЛА) ===\nДанная таблица представляет собой усложненный шифр подстановки (rtc2 code). Каждая буква русского и английского алфавита, а также цифры и базовые знаки, заменяются уникальной комбинацией из ЧЕТЫРЕХ символов, указанной после знака равенства. Для чтения текста необходимо разбивать слова на блоки по 4 символа и сопоставлять их с таблицей.\n\n=== РУССКИЙ АЛФАВИТ ===\nА = q1#a\nБ = w2$b\nВ = e3%c\nГ = r4^d\nД = t5&e\nЕ = y6*f\nЁ = u7(g\nЖ = i8)h\nЗ = o9_j\nИ = p0+k\nЙ = a1-l\nК = s2=m\nЛ = d3[n\nМ = f4]p\nН = g5{q\nО = h6}r\nП = j7|s\nР = k8:t\nС = l9;u\nТ = z0\"v\nУ = x1'w\nФ = c2<x\nХ = v3>y\nЦ = b4?z\nЧ = n5/a\nШ = m6~b\nЩ = q7!c\nЪ = w8@d\nЫ = e9#e\nЬ = r0$f\nЭ = t1%g\nЮ = y2^h\nЯ = u3&j\n\n=== АНГЛИЙСКИЙ АЛФАВИТ ===\nA = !1Qa\nB = @2Wb\nC = #3Ec\nD = $4Rd\nE = %5Te\nF = ^6Yf\nG = &7Ug\nH = *8Ih\nI = (9Oj\nJ = )0Pk\nK = _1Al\nL = +2Sm\nM = -3Dn\nN = =4Fp\nO = [5Gq\nP = ]6Hr\nQ = {7Js\nR = }8Kt\nS = |9Lu\nT = :0Zv\nU = ;1Xw\nV = \"2Cx\nW = '3Vy\nX = <4Bz\nY = >5Na\nZ = ?6Mb\n\n=== ЦИФРЫ И СПЕЦСИМВОЛЫ ===\n0 = ~0n!\n1 = ~1m@\n2 = ~2k#\n3 = ~3j$\n4 = ~4h%\n5 = ~5g^\n6 = ~6f&\n7 = ~7d*\n8 = ~8s(\n9 = ~9a)\n. = .0p_\n/ = /0l+\n- = -0o=\n\n=== ФОРМАТИРОВАНИЕ ===\n1. Словесные пробелы передаются двойным подчеркиванием «__» или обычным пробелом.\n2. Внутри одного слова четырехсимвольные коды пишутся слитно.";
+
+    const I18N = {"ru":{"brand":"КастомРаскладка · rtc1 & rtc2 code","navTranslator":"Переводчик","navTokens":"Разбор блоков","navMatrix":"Таблица клавиш","navPrompt":"Системный промпт","navGithub":"Сайт github.io","copyMainBtn":"Копировать перевод","copiedMainBtn":"Результат скопирован","heroTitle":"Двусторонний переводчик кастомных раскладок: Старый (Лёгкий · 2 симв.) и rtc2 code (Сложный · 4 симв.)","heroSubtitle":"Выберите раскладку галочкой ниже: «Старый (Лёгкий)» кодирует каждую букву 2 символами («привет» → «h(j)o9e3y6l+»), а усложнённый «rtc2 code (Сложный)» кодирует каждую букву, цифру и знак 4 символами («привет» → «j7|sk8:tp0+ke3%cy6*fz0\"v»).","layoutSelectorLabel":"Выбор раскладки шифра:","layoutRtc1Name":"Старый код","layoutRtc1Difficulty":"Лёгкий · 2 симв.","layoutRtc1Desc":"59 клавиш (РУС 33 + EN 26) · 2 символа на букву (А=q1, A=!q)","layoutRtc2Name":"rtc2 code","layoutRtc2Difficulty":"Сложный · 4 симв.","layoutRtc2Desc":"72 клавиши (РУС 33 + EN 26 + Цифры/Знаки 13) · 4 символа на знак (А=q1#a, A=!1Qa, 0=~0n!)","dirTextToCustom":"ТЕКСТ → КАСТОМ","dirCustomToText":"КАСТОМ → ТЕКСТ","swapDirTitle":"Переключить направление перевода","enModeCipher":"EN Шифр","enModeTranslit":"EN Транслит","enModeBrackets":"Теги [lat]","sepSpace":"Пробел « »","sepUnderscore":"Символ «_»","sepDoubleUnderscore":"Символ «__»","quickExamples":"Быстрые примеры:","preset1Label":"привет (РУС)","preset2Label":"hello world (EN шифр)","preset3Label":"привет как дела + hello","preset4Label":"версия 2.0 / тест-1","decodeNoBrackets":"Декод без [..]","decodeWithBrackets":"Декод с [..]","saveToHistory":"Сохранить в журнал","clearBoth":"Очистить оба поля","leftPaneTitle":"Русский и Английский (Текст / Декод)","leftPlaceholder":"Введите текст на русском («привет») или английском («hello world»)...","leftFooterHint":"Ввод на русском (А–Я), английском (A–Z) и цифрах (0–9)","wordsCount":"Слов","charsCount":"симв.","copyTextBtn":"Копировать текст","copiedBtn":"Скопировано","rightPaneTitle":"Старая раскладка — Лёгкий (РУС q1..;6 · EN !q../m)","rightPaneTitleRtc2":"Раскладка rtc2 code — Сложный (4 симв.: А=q1#a · A=!1Qa · 0=~0n!)","rightPlaceholder":"Введите или вставьте 2-символьный код (напр. h(j)o9e3y6l+ или *i%t+s+s[g)...","rightPlaceholderRtc2":"Введите или вставьте 4-символьный код rtc2 code (напр. j7|sk8:tp0+ke3%cy6*fz0\"v)...","rightFooterHint":"Поддержка РУС (33), EN (26), пробела/«_» и скобок [2], [/], [.]","rightFooterHintRtc2":"Поддержка РУС (33), EN (26), цифр/знаков (13) и разделителя «__» / пробела","rightRatioHint":"2 симв. = 1 буква (Лёгкий)","rightRatioHintRtc2":"4 симв. = 1 знак (rtc2 code · Сложный)","copyLayoutBtn":"Копировать раскладку","tokenTitle":"Посимвольный разбор блоков (РУС + АНГЛ ↔ КАСТОМ)","tokenSubtitle":"Наведите курсор на любой блок, чтобы подсветить соответствующую клавишу в интерактивной таблице.","tokenRuCount":"РУС","tokenEnCount":"EN","tokenSymCount":"Цифры/Знаки","tokenSpaceCount":"Пробелов","tokenTagCount":"Скобки [..]","tokenEmpty":"Введите текст на русском или английском выше, чтобы увидеть посимвольное сопоставление каждой буквы и кода выбранной раскладки.","tokenSeparatorLabel":"разделитель","tokenSpaceValue":"пробел","matrixTitle":"Интерактивная таблица: Старый код — Лёгкий (РУС 33 + АНГЛ 26 = 59 клавиш)","matrixTitleRtc2":"Интерактивная таблица: rtc2 code — Сложный (РУС 33 + АНГЛ 26 + ЦИФРЫ/ЗНАКИ 13 = 72 клавиши)","matrixSubtitle":"Нажмите на любую клавишу в таблице, чтобы вставить символ или код в активное поле ввода.","matrixFilterAll":"Все 59 (РУС + EN)","matrixFilterAllRtc2":"Все 72 (rtc2 code)","matrixFilterRu":"Русский (33 · А=q1…Я=;6)","matrixFilterRuRtc2":"Русский (33 · А=q1#a…Я=u3&j)","matrixFilterEn":"English (26 · A=!q…Z=/m)","matrixFilterEnRtc2":"English (26 · A=!1Qa…Z=?6Mb)","matrixFilterSymRtc2":"Цифры и знаки (13 · 0=~0n!…-=-0o=)","matrixSearchPlaceholder":"Поиск буквы, цифры или кода (п, j7|s, h(, a, !1Qa)...","matrixNoMatches":"совпадений в таблице не найдено.","matrixResetFilter":"Сбросить фильтр","matrixKeysUnit":"клавиш","matrixRulesLabel":"Правила:","matrixRuleRu":"РУС: А=q1 … Я=;6","matrixRuleRuRtc2":"РУС: А=q1#a … Я=u3&j (4 симв.)","matrixRuleEn":"АНГЛ: A=!q … Z=/m","matrixRuleEnRtc2":"АНГЛ: A=!1Qa … Z=?6Mb (4 симв.)","matrixRuleTags":"Цифры и знаки в скобках: [2], [/], [.]","matrixRuleTagsRtc2":"Цифры 0–9 (~0n!…~9a)), знаки . / - (.0p_, /0l+, -0o=), пробел «__»","matrixShown":"Показано","matrixOf":"из","rowLabels":{"row1":"РУС · Верхний ряд (А–Й · q1–p0)","row2":"РУС · Средний ряд (К–Т · a$–l+)","row3":"РУС · Нижний ряд (У–Я · z=–;6)","en1":"EN · Верхний ряд (A–J · !q–)p)","en2":"EN · Средний ряд (K–S · _a–|l)","en3":"EN · Нижний ряд (T–Z · ;z–/m)","sym1":"Цифры и спецсимволы"},"rowLabelsRtc2":{"row1":"rtc2 РУС · Верхний ряд (А–Й · q1#a–a1-l)","row2":"rtc2 РУС · Средний ряд (К–Т · s2=m–z0\"v)","row3":"rtc2 РУС · Нижний ряд (У–Я · x1'w–u3&j)","en1":"rtc2 EN · Верхний ряд (A–J · !1Qa–)0Pk)","en2":"rtc2 EN · Средний ряд (K–S · _1Al–|9Lu)","en3":"rtc2 EN · Нижний ряд (T–Z · :0Zv–?6Mb)","sym1":"rtc2 ЦИФРЫ И СПЕЦСИМВОЛЫ (0–9, ., /, - · ~0n!–-0o=)"},"historyTitle":"Журнал сохранённых фраз","historySubtitle":"Быстрое переключение между сохранёнными фразами в лёгкой раскладке и сложной раскладке rtc2 code.","historyCountLabel":"Записей","historyEmpty":"Журнал пуст. Нажмите «Сохранить в журнал», чтобы закрепить текущий перевод.","historyColText":"Текст (РУС / EN)","historyColCustom":"Запись на кастомной раскладке","historyColTag":"Раскладка / Метка","historyColActions":"Действия","historyLoadBtn":"Загрузить","specTitle":"Системная инструкция и экспорт для нейросети","specSubtitle":"Готовый блок системной инструкции для выбранной раскладки (Старый 2-симв. или rtc2 code 4-симв.) с вашим сообщением.","specCopyOnlyBtn":"Копировать только таблицу","specCopiedOnlyBtn":"Инструкция скопирована","specCopyBundleBtn":"Копировать инструкцию + ваш текст","specCopiedBundleBtn":"Промпт + текст скопированы","specLeftLabel":"Таблица и правила: Старый код (59 клавиш · 2 симв.)","specLeftLabelRtc2":"Таблица и правила: rtc2 code — Сложный (72 клавиши · 4 симв.)","specRightLabel":"Предпросмотр полного промпта с вашим запросом","specReadyHint":"Готово к отправке в чат или промпт","specPairsBadge":"Старый · Лёгкий (59 пар · 2 симв.)","specPairsBadgeRtc2":"rtc2 code · Сложный (72 кода · 4 симв.)","ghTitle":"Автодеплой полного интерфейса (1:1) на GitHub Pages (github.io)","ghSubtitle":"Публикация точной копии интерфейса с выбором раскладок (Старый Лёгкий ✓ и rtc2 code Сложный ✓) на ваш github.io.","ghTab1":"1. Права и Автодеплой","ghTab2":"2. Полный index.html (1:1)","ghTab3":"3. Git + Actions","ghUserLabel":"Ваш логин GitHub","ghRepoLabel":"Имя репозитория","ghTargetUrlLabel":"Целевой адрес сайта (URL):","ghAutoTitle":"Автоматическая публикация через переменную GITHUB_TOKEN","ghAutoDesc":"Сервер сам создаёт или обновляет репозиторий, заливает полный 1:1 интерфейс с обеими раскладками (Старый + rtc2 code) в index.html и включает GitHub Pages.","ghCheckTokenBtn":"Проверить GITHUB_TOKEN","ghDeployNowBtn":"Опубликовать на github.io сейчас","ghDeployingBtn":"Публикация на github.io...","ghDownloadHtmlBtn":"Скачать полный index.html","ghCopyHtmlBtn":"Скопировать весь код index.html","ghCopiedHtmlBtn":"HTML-код скопирован","footerLeft":"Переводчик кастомных раскладок · Старый код (Лёгкий, 2 симв., 59 клавиш) и rtc2 code (Сложный, 4 симв., 72 клавиши)","footerRight":"Поддержка разделителей « » / «_» / «__» и цифр/спецсимволов"},"en":{"brand":"CustomLayout · rtc1 & rtc2 code","navTranslator":"Translator","navTokens":"Token Breakdown","navMatrix":"Cipher Table","navPrompt":"AI System Prompt","navGithub":"github.io Site","copyMainBtn":"Copy Translation","copiedMainBtn":"Copied to Clipboard","heroTitle":"Dual Custom Cipher Translator: Old Layout (Easy · 2 chars) & rtc2 code (Hard · 4 chars)","heroSubtitle":"Select your active layout with a checkmark below: \"Old Code (Easy)\" encodes each letter into 2 chars (\"привет\" → \"h(j)o9e3y6l+\"), while \"rtc2 code (Hard)\" encodes every letter, digit, and symbol into 4 chars (\"привет\" → \"j7|sk8:tp0+ke3%cy6*fz0\\\"v\").","layoutSelectorLabel":"Select Cipher Layout:","layoutRtc1Name":"Old Layout","layoutRtc1Difficulty":"Easy · 2 chars","layoutRtc1Desc":"59 keys (RU 33 + EN 26) · 2 chars per letter (А=q1, A=!q)","layoutRtc2Name":"rtc2 code","layoutRtc2Difficulty":"Hard · 4 chars","layoutRtc2Desc":"72 keys (RU 33 + EN 26 + Digits/Symbols 13) · 4 chars per symbol (А=q1#a, A=!1Qa, 0=~0n!)","dirTextToCustom":"TEXT → CUSTOM","dirCustomToText":"CUSTOM → TEXT","swapDirTitle":"Swap translation direction","enModeCipher":"EN Cipher","enModeTranslit":"EN Translit","enModeBrackets":"Tags [lat]","sepSpace":"Space \" \"","sepUnderscore":"Symbol \"_\"","sepDoubleUnderscore":"Symbol \"__\"","quickExamples":"Quick examples:","preset1Label":"привет (RU)","preset2Label":"hello world (EN cipher)","preset3Label":"привет как дела + hello","preset4Label":"version 2.0 / test-1","decodeNoBrackets":"Decode without [..]","decodeWithBrackets":"Decode keeping [..]","saveToHistory":"Save to Log","clearBoth":"Clear Both","leftPaneTitle":"Russian & English (Source Text / Decoded)","leftPlaceholder":"Type text in English (\"hello world\") or Russian (\"привет\")...","leftFooterHint":"Direct input in Russian (А–Я), English (A–Z) and digits (0–9)","wordsCount":"Words","charsCount":"chars","copyTextBtn":"Copy Text","copiedBtn":"Copied","rightPaneTitle":"Old Layout — Easy (RU q1..;6 · EN !q../m)","rightPaneTitleRtc2":"rtc2 code Layout — Hard (4 chars: А=q1#a · A=!1Qa · 0=~0n!)","rightPlaceholder":"Type or paste 2-char layout code (e.g. *i%t+s+s[g or h(j)o9e3y6l+)...","rightPlaceholderRtc2":"Type or paste 4-char rtc2 code (e.g. j7|sk8:tp0+ke3%cy6*fz0\"v)...","rightFooterHint":"Supports RU (33), EN (26), space/\"_\" & [2], [/], [.]","rightFooterHintRtc2":"Supports RU (33), EN (26), digits/symbols (13) & \"__\" / space separator","rightRatioHint":"2 chars = 1 letter (Easy)","rightRatioHintRtc2":"4 chars = 1 symbol (rtc2 code · Hard)","copyLayoutBtn":"Copy Layout","tokenTitle":"Character-by-Character Token Breakdown (RU + EN ↔ CUSTOM)","tokenSubtitle":"Hover over any token block to highlight the matching key in the interactive cipher table.","tokenRuCount":"RU","tokenEnCount":"EN","tokenSymCount":"Digits/Sym","tokenSpaceCount":"Spaces","tokenTagCount":"Brackets [..]","tokenEmpty":"Enter text in English or Russian above to inspect the character-to-code mapping.","tokenSeparatorLabel":"separator","tokenSpaceValue":"space","matrixTitle":"Interactive Cipher Table: Old Layout — Easy (RU 33 + EN 26 = 59 Keys)","matrixTitleRtc2":"Interactive Cipher Table: rtc2 code — Hard (RU 33 + EN 26 + DIGITS/SYM 13 = 72 Keys)","matrixSubtitle":"Click any key in the matrix to insert that symbol or code into the active input pane.","matrixFilterAll":"All 59 (RU + EN)","matrixFilterAllRtc2":"All 72 (rtc2 code)","matrixFilterRu":"Russian (33 · А=q1…Я=;6)","matrixFilterRuRtc2":"Russian (33 · А=q1#a…Я=u3&j)","matrixFilterEn":"English (26 · A=!q…Z=/m)","matrixFilterEnRtc2":"English (26 · A=!1Qa…Z=?6Mb)","matrixFilterSymRtc2":"Digits & Symbols (13 · 0=~0n!…-=-0o=)","matrixSearchPlaceholder":"Search letter, digit, or code (a, !1Qa, п, j7|s)...","matrixNoMatches":"no matching keys found.","matrixResetFilter":"Reset Filter","matrixKeysUnit":"keys","matrixRulesLabel":"Rules:","matrixRuleRu":"RU: А=q1 … Я=;6","matrixRuleRuRtc2":"RU: А=q1#a … Я=u3&j (4 chars)","matrixRuleEn":"EN: A=!q … Z=/m","matrixRuleEnRtc2":"EN: A=!1Qa … Z=?6Mb (4 chars)","matrixRuleTags":"Digits & punctuation in brackets: [2], [/], [.]","matrixRuleTagsRtc2":"Digits 0–9 (~0n!…~9a)), symbols . / - (.0p_, /0l+, -0o=), space \"__\"","matrixShown":"Showing","matrixOf":"of","rowLabels":{"row1":"RU · Top Row (А–Й · q1–p0)","row2":"RU · Middle Row (К–Т · a$–l+)","row3":"RU · Bottom Row (У–Я · z=–;6)","en1":"EN · Top Row (A–J · !q–)p)","en2":"EN · Middle Row (K–S · _a–|l)","en3":"EN · Bottom Row (T–Z · ;z–/m)","sym1":"Digits & Special Symbols"},"rowLabelsRtc2":{"row1":"rtc2 RU · Top Row (А–Й · q1#a–a1-l)","row2":"rtc2 RU · Middle Row (К–Т · s2=m–z0\"v)","row3":"rtc2 RU · Bottom Row (У–Я · x1'w–u3&j)","en1":"rtc2 EN · Top Row (A–J · !1Qa–)0Pk)","en2":"rtc2 EN · Middle Row (K–S · _1Al–|9Lu)","en3":"rtc2 EN · Bottom Row (T–Z · :0Zv–?6Mb)","sym1":"rtc2 DIGITS & SPECIAL SYMBOLS (0–9, ., /, - · ~0n!–-0o=)"},"historyTitle":"Saved Phrases Log","historySubtitle":"Quickly switch between saved phrases in both Old (Easy) and rtc2 code (Hard) layouts.","historyCountLabel":"Entries","historyEmpty":"No saved phrases yet. Click \"Save to Log\" to store the current translation.","historyColText":"Source Text (RU / EN)","historyColCustom":"Custom Layout Code","historyColTag":"Layout / Label","historyColActions":"Actions","historyLoadBtn":"Load","specTitle":"AI System Instruction & Prompt Export","specSubtitle":"Ready-to-use system instruction block for the active layout (Old 2-char or rtc2 code 4-char) and your encoded message.","specCopyOnlyBtn":"Copy Table Only","specCopiedOnlyBtn":"Table Copied","specCopyBundleBtn":"Copy Instruction + Your Text","specCopiedBundleBtn":"Prompt + Text Copied","specLeftLabel":"Cipher Tables & Rules: Old Layout (59 keys · 2 chars)","specLeftLabelRtc2":"Cipher Tables & Rules: rtc2 code — Hard (72 keys · 4 chars)","specRightLabel":"Full AI Prompt Preview with Your Encoded Text","specReadyHint":"Ready to paste into any AI chat or prompt","specPairsBadge":"Old · Easy (59 pairs · 2 chars)","specPairsBadgeRtc2":"rtc2 code · Hard (72 codes · 4 chars)","ghTitle":"Auto-Deploy Full Interface (1:1) to GitHub Pages (github.io)","ghSubtitle":"Publish an exact 1:1 copy of this interface with the layout selector (Old Easy ✓ and rtc2 code Hard ✓) to your github.io.","ghTab1":"1. Permissions & Auto-Deploy","ghTab2":"2. Full index.html (1:1)","ghTab3":"3. Git + Actions","ghUserLabel":"Your GitHub Username","ghRepoLabel":"Repository Name","ghTargetUrlLabel":"Target Live Site URL:","ghAutoTitle":"Automated Deployment via GITHUB_TOKEN","ghAutoDesc":"The server automatically creates or updates the repository, commits the 1:1 full interface with both layouts (Old + rtc2 code) into index.html, and enables GitHub Pages.","ghCheckTokenBtn":"Check GITHUB_TOKEN","ghDeployNowBtn":"Publish to github.io Now","ghDeployingBtn":"Publishing to github.io...","ghDownloadHtmlBtn":"Download Full index.html","ghCopyHtmlBtn":"Copy Full index.html Code","ghCopiedHtmlBtn":"HTML Code Copied","footerLeft":"Custom Layout Translator · Old Layout (Easy, 2 chars, 59 keys) & rtc2 code (Hard, 4 chars, 72 keys)","footerRight":"Supports \" \" / \"_\" / \"__\" separators and digits/special symbols"}};
 
     const ruToCode = new Map();
     const enToCode = new Map();
@@ -328,6 +389,35 @@
       enToCode.set(e.ruLower, e.code);
       codeToChar.set(e.code, { char: e.ruLower, lang: 'en' });
       codeToChar.set(e.code.toUpperCase(), { char: e.ruLower, lang: 'en' });
+    });
+
+    const rtc2RuToCode = new Map();
+    const rtc2EnToCode = new Map();
+    const rtc2SymToCode = new Map();
+    const rtc2CodeToChar = new Map();
+
+    RTC2_RU_TABLE.forEach(e => {
+      rtc2RuToCode.set(e.ruUpper, e.code);
+      rtc2RuToCode.set(e.ruLower, e.code);
+      rtc2CodeToChar.set(e.code, { char: e.ruLower, lang: 'ru', canonicalCode: e.code });
+      rtc2CodeToChar.set(e.code.toLowerCase(), { char: e.ruLower, lang: 'ru', canonicalCode: e.code });
+      rtc2CodeToChar.set(e.code.toUpperCase(), { char: e.ruLower, lang: 'ru', canonicalCode: e.code });
+    });
+
+    RTC2_EN_TABLE.forEach(e => {
+      rtc2EnToCode.set(e.ruUpper, e.code);
+      rtc2EnToCode.set(e.ruLower, e.code);
+      rtc2CodeToChar.set(e.code, { char: e.ruLower, lang: 'en', canonicalCode: e.code });
+      rtc2CodeToChar.set(e.code.toLowerCase(), { char: e.ruLower, lang: 'en', canonicalCode: e.code });
+      rtc2CodeToChar.set(e.code.toUpperCase(), { char: e.ruLower, lang: 'en', canonicalCode: e.code });
+    });
+
+    RTC2_SYM_TABLE.forEach(e => {
+      rtc2SymToCode.set(e.ruUpper, e.code);
+      rtc2SymToCode.set(e.ruLower, e.code);
+      rtc2CodeToChar.set(e.code, { char: e.ruLower, lang: 'sym', canonicalCode: e.code });
+      rtc2CodeToChar.set(e.code.toLowerCase(), { char: e.ruLower, lang: 'sym', canonicalCode: e.code });
+      rtc2CodeToChar.set(e.code.toUpperCase(), { char: e.ruLower, lang: 'sym', canonicalCode: e.code });
     });
 
     const EN_TRANSLIT_DIGRAPHS = [
@@ -363,6 +453,7 @@
     }
 
     let uiLang = 'ru';
+    let activeLayout = 'rtc2';
     let direction = 'ru-to-custom';
     let spaceMode = 'space';
     let englishMode = 'en-cipher';
@@ -372,15 +463,15 @@
     let highlightedCode = null;
 
     let historyItems = [
-      { id: 'seed-1', ruText: 'привет как дела', customText: 'h(j)o9e3y6l+ a$q1a$ t5y6s%q1', spaceMode: 'space', timestamp: 'RU' },
-      { id: 'seed-2', ruText: 'hello world', customText: '*i%t+s+s[g "v[g}k+s$r', spaceMode: 'space', timestamp: 'EN' }
+      { id: 'seed-rtc2-1', layout: 'rtc2', ruText: 'привет как дела', customText: 'j7|sk8:tp0+ke3%cy6*fz0"v s2=mq1#as2=m t5&ey6*fd3[nq1#a', spaceMode: 'space', timestamp: 'rtc2 code · Сложный' },
+      { id: 'seed-rtc1-1', layout: 'rtc1', ruText: 'привет как дела', customText: 'h(j)o9e3y6l+ a$q1a$ t5y6s%q1', spaceMode: 'space', timestamp: 'Старый · Лёгкий' },
+      { id: 'seed-rtc2-2', layout: 'rtc2', ruText: 'hello world', customText: '*8Ih%5Te+2Sm+2Sm[5Gq '3Vy[5Gq}8Kt+2Sm$4Rd', spaceMode: 'space', timestamp: 'rtc2 code · EN' }
     ];
 
     const ruTextarea = document.getElementById('russian-textarea');
     const customTextarea = document.getElementById('custom-textarea');
     const specStaticBox = document.getElementById('spec-static-box');
     const specDynamicBox = document.getElementById('spec-dynamic-box');
-    specStaticBox.textContent = SYSTEM_SPEC;
 
     function isLatinLetter(ch) {
       return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
@@ -389,12 +480,13 @@
       return isLatinLetter(ch) || (ch >= '0' && ch <= '9') || ch === '_' || ch === '-' || ch === '.' || ch === '/';
     }
 
-    function matchBracketBlockAt(input, i) {
+    function matchBracketBlockAt(input, i, layout) {
       if (input[i] !== '[') return -1;
+      if (layout === 'rtc2' && input.slice(i, i + 4).toLowerCase() === '[5gq') return -1;
       const closeIdx = input.indexOf(']', i + 1);
       if (closeIdx === -1) return -1;
       const pair = input.slice(i, i + 2).toLowerCase();
-      if (pair === '[g') {
+      if (layout === 'rtc1' && pair === '[g') {
         const inner = input.slice(i + 1, closeIdx);
         if (inner.length >= 2 && /^[a-zA-Z0-9_./-]+$/.test(inner)) {
           return closeIdx;
@@ -411,6 +503,68 @@
     }
 
     function encodeToCustom(input) {
+      if (activeLayout === 'rtc2') {
+        let res = '';
+        let i = 0;
+        while (i < input.length) {
+          const ch = input[i];
+          if (ch === '[') {
+            const closeIdx = input.indexOf(']', i + 1);
+            if (closeIdx !== -1 && !/[а-яА-ЯёЁ]/.test(input.slice(i + 1, closeIdx))) {
+              res += input.slice(i, closeIdx + 1);
+              i = closeIdx + 1;
+              continue;
+            }
+          }
+          const ruCode = rtc2RuToCode.get(ch);
+          if (ruCode !== undefined) {
+            res += ruCode;
+            i++;
+            continue;
+          }
+          if (ch === ' ') {
+            res += spaceMode === 'underscore' ? '__' : ' ';
+            i++;
+            continue;
+          }
+          if (isLatinLetter(ch)) {
+            if (englishMode === 'en-cipher') {
+              const enCode = rtc2EnToCode.get(ch);
+              if (enCode !== undefined) {
+                res += enCode;
+                i++;
+                continue;
+              }
+            } else if (englishMode === 'en-translit') {
+              let end = i + 1;
+              while (end < input.length && isLatinLetter(input[end])) end++;
+              const ruEq = transliterateEnToRu(input.slice(i, end));
+              for (const rCh of ruEq) {
+                res += rtc2RuToCode.get(rCh) || rCh;
+              }
+              i = end;
+              continue;
+            } else {
+              let end = i + 1;
+              while (end < input.length && isLatinWordChar(input[end])) end++;
+              res += '[' + input.slice(i, end) + ']';
+              i = end;
+              continue;
+            }
+          }
+          const symCode = rtc2SymToCode.get(ch);
+          if (symCode !== undefined) {
+            res += symCode;
+            i++;
+            continue;
+          }
+          res += ch;
+          i++;
+        }
+        return res;
+      }
+
+      // rtc1
       let res = '';
       let i = 0;
       while (i < input.length) {
@@ -475,12 +629,52 @@
     }
 
     function decodeFromCustom(input) {
+      if (activeLayout === 'rtc2') {
+        let res = '';
+        let i = 0;
+        while (i < input.length) {
+          const ch = input[i];
+          if (ch === '[') {
+            const closeIdx = matchBracketBlockAt(input, i, 'rtc2');
+            if (closeIdx !== -1) {
+              const inner = input.slice(i + 1, closeIdx);
+              res += stripLatinBrackets ? inner : '[' + inner + ']';
+              i = closeIdx + 1;
+              continue;
+            }
+          }
+          if (input.slice(i, i + 2) === '__') {
+            res += ' ';
+            i += 2;
+            continue;
+          }
+          if (i + 3 < input.length) {
+            const quad = input.slice(i, i + 4);
+            const hit = rtc2CodeToChar.get(quad) || rtc2CodeToChar.get(quad.toLowerCase());
+            if (hit !== undefined) {
+              res += hit.char;
+              i += 4;
+              continue;
+            }
+          }
+          if (ch === '_') {
+            res += ' ';
+            i++;
+            continue;
+          }
+          res += ch;
+          i++;
+        }
+        return res;
+      }
+
+      // rtc1
       let res = '';
       let i = 0;
       while (i < input.length) {
         const ch = input[i];
         if (ch === '[') {
-          const closeIdx = matchBracketBlockAt(input, i);
+          const closeIdx = matchBracketBlockAt(input, i, 'rtc1');
           if (closeIdx !== -1) {
             const inner = input.slice(i + 1, closeIdx);
             res += stripLatinBrackets ? inner : '[' + inner + ']';
@@ -517,6 +711,110 @@
       const input = direction === 'ru-to-custom' ? ruTextarea.value : customTextarea.value;
       const segs = [];
       let i = 0;
+      if (activeLayout === 'rtc2') {
+        if (direction === 'ru-to-custom') {
+          while (i < input.length) {
+            const ch = input[i];
+            if (ch === '[') {
+              const closeIdx = input.indexOf(']', i + 1);
+              if (closeIdx !== -1 && !/[а-яА-ЯёЁ]/.test(input.slice(i + 1, closeIdx))) {
+                const raw = input.slice(i, closeIdx + 1);
+                segs.push({ type: 'latin', source: raw, target: raw });
+                i = closeIdx + 1;
+                continue;
+              }
+            }
+            const ruCode = rtc2RuToCode.get(ch);
+            if (ruCode !== undefined) {
+              segs.push({ type: 'cipher', ruChar: ch.toLowerCase(), customCode: ruCode });
+              i++;
+              continue;
+            }
+            if (ch === ' ') {
+              segs.push({ type: 'space', source: ' ', target: spaceMode === 'underscore' ? '__' : ' ' });
+              i++;
+              continue;
+            }
+            if (isLatinLetter(ch)) {
+              if (englishMode === 'en-cipher') {
+                const enCode = rtc2EnToCode.get(ch);
+                if (enCode !== undefined) {
+                  segs.push({ type: 'en-cipher', ruChar: ch.toLowerCase(), customCode: enCode });
+                  i++;
+                  continue;
+                }
+              } else if (englishMode === 'en-translit') {
+                let end = i + 1;
+                while (end < input.length && isLatinLetter(input[end])) end++;
+                const ruEq = transliterateEnToRu(input.slice(i, end));
+                for (const rCh of ruEq) {
+                  const c = rtc2RuToCode.get(rCh);
+                  if (c) segs.push({ type: 'cipher', ruChar: rCh, customCode: c });
+                }
+                i = end;
+                continue;
+              } else {
+                let end = i + 1;
+                while (end < input.length && isLatinWordChar(input[end])) end++;
+                const run = input.slice(i, end);
+                segs.push({ type: 'latin', source: run, target: '[' + run + ']' });
+                i = end;
+                continue;
+              }
+            }
+            const symCode = rtc2SymToCode.get(ch);
+            if (symCode !== undefined) {
+              segs.push({ type: 'sym-cipher', ruChar: ch, customCode: symCode });
+              i++;
+              continue;
+            }
+            segs.push({ type: 'punct', source: ch, target: ch });
+            i++;
+          }
+        } else {
+          while (i < input.length) {
+            const ch = input[i];
+            if (ch === '[') {
+              const closeIdx = matchBracketBlockAt(input, i, 'rtc2');
+              if (closeIdx !== -1) {
+                const raw = input.slice(i, closeIdx + 1);
+                const inner = input.slice(i + 1, closeIdx);
+                segs.push({ type: 'latin', source: raw, target: stripLatinBrackets ? inner : raw });
+                i = closeIdx + 1;
+                continue;
+              }
+            }
+            if (input.slice(i, i + 2) === '__') {
+              segs.push({ type: 'space', source: '__', target: ' ' });
+              i += 2;
+              continue;
+            }
+            if (i + 3 < input.length) {
+              const quad = input.slice(i, i + 4);
+              const hit = rtc2CodeToChar.get(quad) || rtc2CodeToChar.get(quad.toLowerCase());
+              if (hit !== undefined) {
+                segs.push({
+                  type: hit.lang === 'en' ? 'en-cipher' : hit.lang === 'sym' ? 'sym-cipher' : 'cipher',
+                  ruChar: hit.char,
+                  customCode: hit.canonicalCode
+                });
+                i += 4;
+                continue;
+              }
+            }
+            if (ch === '_' || ch === ' ') {
+              segs.push({ type: 'space', source: ch, target: ' ' });
+              i++;
+              continue;
+            }
+            segs.push({ type: 'punct', source: ch, target: ch });
+            i++;
+          }
+        }
+        return segs;
+      }
+
+      // rtc1
       if (direction === 'ru-to-custom') {
         while (i < input.length) {
           const ch = input[i];
@@ -574,7 +872,7 @@
         while (i < input.length) {
           const ch = input[i];
           if (ch === '[') {
-            const closeIdx = matchBracketBlockAt(input, i);
+            const closeIdx = matchBracketBlockAt(input, i, 'rtc1');
             if (closeIdx !== -1) {
               const raw = input.slice(i, closeIdx + 1);
               const inner = input.slice(i + 1, closeIdx);
@@ -614,7 +912,7 @@
       const segs = tokenizeCurrent();
       const listEl = document.getElementById('token-stream-list');
       listEl.innerHTML = '';
-      let ruCount = 0, enCount = 0, sCount = 0, lCount = 0;
+      let ruCount = 0, enCount = 0, symCount = 0, sCount = 0, lCount = 0;
 
       segs.forEach(seg => {
         const div = document.createElement('div');
@@ -630,10 +928,18 @@
           div.innerHTML = '<span class="text-xs font-semibold text-slate-100">' + seg.ruChar + '</span><span class="text-xs font-mono font-medium text-emerald-400 mt-0.5">' + seg.customCode + '</span>';
           div.addEventListener('mouseenter', () => { highlightedCode = seg.customCode; renderMatrix(); });
           div.addEventListener('mouseleave', () => { highlightedCode = null; renderMatrix(); });
+        } else if (seg.type === 'sym-cipher') {
+          symCount++;
+          div.className = 'flex flex-col items-center justify-center min-w-[48px] px-2.5 py-1.5 rounded-lg bg-[#0b0f17] border border-purple-900/70 hover:border-purple-500 transition-colors cursor-default';
+          div.innerHTML = '<span class="text-xs font-semibold text-slate-100">' + seg.ruChar + '</span><span class="text-xs font-mono font-medium text-purple-400 mt-0.5">' + seg.customCode + '</span>';
+          div.addEventListener('mouseenter', () => { highlightedCode = seg.customCode; renderMatrix(); });
+          div.addEventListener('mouseleave', () => { highlightedCode = null; renderMatrix(); });
         } else if (seg.type === 'space') {
           sCount++;
+          const isDouble = seg.source === '__' || seg.target === '__';
+          const isSingle = seg.source === '_' || seg.target === '_';
           div.className = 'flex flex-col items-center justify-center px-2.5 py-1.5 rounded-lg bg-[#0b0f17] border border-slate-800/70 text-slate-500 font-mono text-xs';
-          div.innerHTML = '<span class="text-[11px] text-slate-500">' + t.tokenSeparatorLabel + '</span><span class="text-xs text-slate-300 mt-0.5">' + (seg.source === '_' || seg.target === '_' ? '_' : t.tokenSpaceValue) + '</span>';
+          div.innerHTML = '<span class="text-[11px] text-slate-500">' + t.tokenSeparatorLabel + '</span><span class="text-xs text-slate-300 mt-0.5">' + (isDouble ? '__' : isSingle ? '_' : t.tokenSpaceValue) + '</span>';
         } else if (seg.type === 'latin') {
           lCount++;
           div.className = 'flex flex-col items-center justify-center px-3 py-1.5 rounded-lg bg-amber-950/20 border border-amber-700/40 font-mono text-xs';
@@ -648,6 +954,7 @@
       document.getElementById('token-counts').textContent =
         t.tokenRuCount + ': ' + ruCount + ' · ' +
         t.tokenEnCount + ': ' + enCount + ' · ' +
+        t.tokenSymCount + ': ' + symCount + ' · ' +
         t.tokenSpaceCount + ': ' + sCount + ' · ' +
         t.tokenTagCount + ': ' + lCount;
     }
@@ -656,7 +963,7 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       const isHi = highlightedCode === entry.code;
-      const codeColor = entry.lang === 'en' ? 'text-emerald-400' : 'text-blue-400';
+      const codeColor = entry.lang === 'sym' ? 'text-purple-400' : entry.lang === 'en' ? 'text-emerald-400' : 'text-blue-400';
       btn.className = 'group flex flex-col items-center justify-between p-2.5 rounded-lg border transition-colors text-left cursor-pointer ' +
         (isHi ? 'bg-blue-600/20 border-blue-500 text-white' : 'bg-[#0b0f17] border-slate-800/90 hover:border-blue-500/60 hover:bg-slate-900');
       btn.innerHTML =
@@ -682,30 +989,38 @@
 
     function renderMatrix() {
       const t = I18N[uiLang];
+      const isRtc2 = activeLayout === 'rtc2';
+      const sourceEntries = isRtc2 ? ALL_RTC2_ENTRIES : ALL_ENTRIES;
+      const totalCount = isRtc2 ? 72 : 59;
       const container = document.getElementById('matrix-content');
       container.innerHTML = '';
       const q = searchQuery.trim().toLowerCase();
-      const filtered = ALL_ENTRIES.filter(e => {
+      const filtered = sourceEntries.filter(e => {
         if (activeLangFilter !== 'all' && e.lang !== activeLangFilter) return false;
         if (!q) return true;
         return e.ruLower.includes(q) || e.code.toLowerCase().includes(q);
       });
 
       document.getElementById('matrix-shown-count').textContent =
-        t.matrixShown + ': ' + filtered.length + ' ' + t.matrixOf + ' 59';
+        t.matrixShown + ': ' + filtered.length + ' ' + t.matrixOf + ' ' + totalCount;
 
       const groups = activeLangFilter === 'ru'
         ? ['row1', 'row2', 'row3']
         : activeLangFilter === 'en'
         ? ['en1', 'en2', 'en3']
-        : ['row1', 'row2', 'row3', 'en1', 'en2', 'en3'];
+        : activeLangFilter === 'sym'
+        ? (isRtc2 ? ['sym1'] : [])
+        : (isRtc2 ? ['row1', 'row2', 'row3', 'en1', 'en2', 'en3', 'sym1'] : ['row1', 'row2', 'row3', 'en1', 'en2', 'en3']);
+
+      const rowLabelsMap = isRtc2 ? t.rowLabelsRtc2 : t.rowLabels;
 
       if (!q) {
         groups.forEach(rKey => {
-          const rowItems = ALL_ENTRIES.filter(e => e.rowGroup === rKey);
+          const rowItems = sourceEntries.filter(e => e.rowGroup === rKey);
           const isEn = rKey.startsWith('en');
+          const isSym = rKey === 'sym1';
           const wrap = document.createElement('div');
-          wrap.innerHTML = '<div class="flex items-center justify-between text-xs text-slate-400 mb-2.5"><span class="font-medium ' + (isEn ? 'text-emerald-300' : 'text-slate-300') + '">' + t.rowLabels[rKey] + '</span><span class="font-mono tabular-nums">' + rowItems.length + ' ' + t.matrixKeysUnit + '</span></div>';
+          wrap.innerHTML = '<div class="flex items-center justify-between text-xs text-slate-400 mb-2.5"><span class="font-medium ' + (isSym ? 'text-purple-300' : isEn ? 'text-emerald-300' : 'text-slate-300') + '">' + rowLabelsMap[rKey] + '</span><span class="font-mono tabular-nums">' + rowItems.length + ' ' + t.matrixKeysUnit + '</span></div>';
           const grid = document.createElement('div');
           grid.className = 'grid grid-cols-3 sm:grid-cols-6 md:grid-cols-11 gap-2';
           rowItems.forEach(item => grid.appendChild(createKeyButton(item)));
@@ -734,6 +1049,7 @@
           '<td class="py-3 px-4 text-xs text-slate-400 font-mono tabular-nums whitespace-nowrap">' + item.timestamp + '</td>' +
           '<td class="py-3 pl-4 text-right whitespace-nowrap"><button type="button" class="load-btn px-2.5 py-1 text-xs font-medium text-slate-200 bg-[#0b0f17] hover:bg-slate-800 border border-slate-800 rounded-md cursor-pointer">' + t.historyLoadBtn + '</button></td>';
         tr.querySelector('.load-btn').addEventListener('click', () => {
+          activeLayout = item.layout || 'rtc1';
           ruTextarea.value = item.ruText;
           customTextarea.value = item.customText;
           syncAllUI();
@@ -744,18 +1060,53 @@
 
     function applyUILanguage() {
       const t = I18N[uiLang];
+      const isRtc2 = activeLayout === 'rtc2';
       document.documentElement.lang = uiLang;
 
       document.getElementById('ui-brand').textContent = t.brand;
       document.getElementById('nav-translator').textContent = t.navTranslator;
       document.getElementById('nav-tokens').textContent = t.navTokens;
-      document.getElementById('nav-matrix').textContent = t.navMatrix;
+      document.getElementById('nav-matrix').textContent = t.navMatrix + ' (' + (isRtc2 ? '72' : '59') + ')';
       document.getElementById('nav-history').textContent = t.historyTitle;
       document.getElementById('nav-prompt').textContent = t.navPrompt;
       document.getElementById('top-copy-btn').textContent = t.copyMainBtn;
 
       document.getElementById('ui-hero-title').textContent = t.heroTitle;
       document.getElementById('ui-hero-subtitle').textContent = t.heroSubtitle;
+
+      document.getElementById('ui-layout-selector-label').textContent = t.layoutSelectorLabel;
+      document.getElementById('ui-active-layout-badge').textContent = isRtc2 ? '✓ rtc2 code (Сложный)' : '✓ Старый код (Лёгкий)';
+      document.getElementById('ui-rtc1-name').textContent = t.layoutRtc1Name;
+      document.getElementById('ui-rtc1-diff').textContent = t.layoutRtc1Difficulty;
+      document.getElementById('ui-rtc1-desc').textContent = t.layoutRtc1Desc;
+      document.getElementById('ui-rtc2-name').textContent = t.layoutRtc2Name;
+      document.getElementById('ui-rtc2-diff').textContent = t.layoutRtc2Difficulty;
+      document.getElementById('ui-rtc2-desc').textContent = t.layoutRtc2Desc;
+
+      const btnRtc1 = document.getElementById('btn-layout-rtc1');
+      const btnRtc2 = document.getElementById('btn-layout-rtc2');
+      const chkRtc1 = document.getElementById('check-box-rtc1');
+      const chkRtc2 = document.getElementById('check-box-rtc2');
+      const stRtc1 = document.getElementById('status-rtc1');
+      const stRtc2 = document.getElementById('status-rtc2');
+
+      if (isRtc2) {
+        btnRtc2.className = 'flex items-start justify-between gap-3.5 p-4 rounded-xl border text-left transition-all cursor-pointer bg-amber-950/30 border-amber-500 ring-1 ring-amber-500/40';
+        chkRtc2.className = 'mt-0.5 w-5 h-5 rounded-md flex items-center justify-center border shrink-0 transition-colors bg-amber-500 border-amber-300 text-slate-950 font-bold text-xs';
+        stRtc2.classList.remove('hidden');
+
+        btnRtc1.className = 'flex items-start justify-between gap-3.5 p-4 rounded-xl border text-left transition-all cursor-pointer bg-[#0b0f17] border-slate-800 hover:border-slate-700';
+        chkRtc1.className = 'mt-0.5 w-5 h-5 rounded-md flex items-center justify-center border shrink-0 transition-colors bg-slate-900 border-slate-700 text-transparent font-bold text-xs';
+        stRtc1.classList.add('hidden');
+      } else {
+        btnRtc1.className = 'flex items-start justify-between gap-3.5 p-4 rounded-xl border text-left transition-all cursor-pointer bg-blue-950/35 border-blue-500 ring-1 ring-blue-500/40';
+        chkRtc1.className = 'mt-0.5 w-5 h-5 rounded-md flex items-center justify-center border shrink-0 transition-colors bg-blue-600 border-blue-400 text-white font-bold text-xs';
+        stRtc1.classList.remove('hidden');
+
+        btnRtc2.className = 'flex items-start justify-between gap-3.5 p-4 rounded-xl border text-left transition-all cursor-pointer bg-[#0b0f17] border-slate-800 hover:border-slate-700';
+        chkRtc2.className = 'mt-0.5 w-5 h-5 rounded-md flex items-center justify-center border shrink-0 transition-colors bg-slate-900 border-slate-700 text-transparent font-bold text-xs';
+        stRtc2.classList.add('hidden');
+      }
 
       document.getElementById('btn-ui-ru').className = 'px-2.5 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ' + (uiLang === 'ru' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200');
       document.getElementById('btn-ui-en').className = 'px-2.5 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ' + (uiLang === 'en' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200');
@@ -766,7 +1117,7 @@
       document.getElementById('btn-en-translit').textContent = t.enModeTranslit;
       document.getElementById('btn-en-brackets').textContent = t.enModeBrackets;
       document.getElementById('btn-sep-space').textContent = t.sepSpace;
-      document.getElementById('btn-sep-under').textContent = t.sepUnderscore;
+      document.getElementById('btn-sep-under').textContent = isRtc2 ? t.sepDoubleUnderscore : t.sepUnderscore;
 
       document.getElementById('ui-quick-examples').textContent = t.quickExamples;
       document.getElementById('preset-1').textContent = t.preset1Label;
@@ -782,25 +1133,34 @@
       document.getElementById('ui-left-footer').textContent = t.leftFooterHint;
       document.getElementById('btn-copy-ru').textContent = t.copyTextBtn;
 
-      document.getElementById('ui-right-title').textContent = t.rightPaneTitle;
-      customTextarea.placeholder = t.rightPlaceholder;
-      document.getElementById('ui-right-footer').textContent = t.rightFooterHint;
-      document.getElementById('ui-right-ratio').textContent = t.rightRatioHint;
+      document.getElementById('ui-right-title').textContent = isRtc2 ? t.rightPaneTitleRtc2 : t.rightPaneTitle;
+      customTextarea.placeholder = isRtc2 ? t.rightPlaceholderRtc2 : t.rightPlaceholder;
+      document.getElementById('ui-right-footer').textContent = isRtc2 ? t.rightFooterHintRtc2 : t.rightFooterHint;
+      document.getElementById('ui-right-ratio').textContent = isRtc2 ? t.rightRatioHintRtc2 : t.rightRatioHint;
       document.getElementById('btn-copy-custom').textContent = t.copyLayoutBtn;
 
       document.getElementById('ui-token-title').textContent = t.tokenTitle;
       document.getElementById('ui-token-subtitle').textContent = t.tokenSubtitle;
 
-      document.getElementById('ui-matrix-title').textContent = t.matrixTitle;
+      document.getElementById('ui-matrix-title').textContent = isRtc2 ? t.matrixTitleRtc2 : t.matrixTitle;
       document.getElementById('ui-matrix-subtitle').textContent = t.matrixSubtitle;
-      document.getElementById('filter-all').textContent = t.matrixFilterAll;
-      document.getElementById('filter-ru').textContent = t.matrixFilterRu;
-      document.getElementById('filter-en').textContent = t.matrixFilterEn;
+      document.getElementById('filter-all').textContent = isRtc2 ? t.matrixFilterAllRtc2 : t.matrixFilterAll;
+      document.getElementById('filter-ru').textContent = isRtc2 ? t.matrixFilterRuRtc2 : t.matrixFilterRu;
+      document.getElementById('filter-en').textContent = isRtc2 ? t.matrixFilterEnRtc2 : t.matrixFilterEn;
+      const symBtn = document.getElementById('filter-sym');
+      if (isRtc2) {
+        symBtn.classList.remove('hidden');
+        symBtn.textContent = t.matrixFilterSymRtc2;
+      } else {
+        symBtn.classList.add('hidden');
+        if (activeLangFilter === 'sym') activeLangFilter = 'all';
+      }
+
       document.getElementById('matrix-search').placeholder = t.matrixSearchPlaceholder;
       document.getElementById('ui-rules-label').textContent = t.matrixRulesLabel;
-      document.getElementById('ui-rule-ru').textContent = t.matrixRuleRu;
-      document.getElementById('ui-rule-en').textContent = t.matrixRuleEn;
-      document.getElementById('ui-rule-tags').textContent = t.matrixRuleTags;
+      document.getElementById('ui-rule-ru').textContent = isRtc2 ? t.matrixRuleRuRtc2 : t.matrixRuleRu;
+      document.getElementById('ui-rule-en').textContent = isRtc2 ? t.matrixRuleEnRtc2 : t.matrixRuleEn;
+      document.getElementById('ui-rule-tags').textContent = isRtc2 ? t.matrixRuleTagsRtc2 : t.matrixRuleTags;
 
       document.getElementById('ui-history-title').textContent = t.historyTitle;
       document.getElementById('ui-history-subtitle').textContent = t.historySubtitle;
@@ -813,10 +1173,11 @@
       document.getElementById('ui-spec-subtitle').textContent = t.specSubtitle;
       document.getElementById('btn-copy-spec-only').textContent = t.specCopyOnlyBtn;
       document.getElementById('btn-copy-bundle').textContent = t.specCopyBundleBtn;
-      document.getElementById('ui-spec-left').textContent = t.specLeftLabel;
+      document.getElementById('ui-spec-left').textContent = isRtc2 ? t.specLeftLabelRtc2 : t.specLeftLabel;
+      document.getElementById('ui-spec-count').textContent = isRtc2 ? '72' : '59';
       document.getElementById('ui-spec-right').textContent = t.specRightLabel;
       document.getElementById('ui-spec-ready').textContent = t.specReadyHint;
-      document.getElementById('ui-spec-badge').textContent = t.specPairsBadge;
+      document.getElementById('ui-spec-badge').textContent = isRtc2 ? t.specPairsBadgeRtc2 : t.specPairsBadge;
 
       document.getElementById('ui-footer-left').textContent = t.footerLeft;
       document.getElementById('ui-footer-right').textContent = t.footerRight;
@@ -825,6 +1186,10 @@
     function syncAllUI() {
       applyUILanguage();
       const t = I18N[uiLang];
+      const isRtc2 = activeLayout === 'rtc2';
+      const activeSpecText = isRtc2 ? RTC2_SYSTEM_SPEC : SYSTEM_SPEC;
+      specStaticBox.textContent = activeSpecText;
+
       const ruVal = ruTextarea.value;
       const customVal = customTextarea.value;
       document.getElementById('ru-char-count').textContent = ruVal.length + ' ' + t.charsCount;
@@ -832,10 +1197,10 @@
       const words = ruVal.trim() ? ruVal.trim().split(/\s+/).length : 0;
       document.getElementById('ru-word-count').textContent = t.wordsCount + ': ' + words;
 
-      const headerLine = uiLang === 'en' ? '=== CUSTOM LAYOUT MESSAGE ===\n' : '=== ЗАПРОС НА КАСТОМНОЙ РАСКЛАДКЕ ===\n';
-      const dynamicPart = headerLine + (customVal || 'h(j)o9e3y6l+ a$q1a$ t5y6s%q1');
+      const headerLine = '=== ЗАПРОС НА КАСТОМНОЙ РАСКЛАДКЕ (' + (isRtc2 ? 'rtc2 code · 4 симв.' : 'Старый · 2 симв.') + ') ===\n';
+      const dynamicPart = headerLine + (customVal || (isRtc2 ? 'j7|sk8:tp0+ke3%cy6*fz0"v' : 'h(j)o9e3y6l+'));
       specDynamicBox.textContent = dynamicPart;
-      document.getElementById('bundle-len').textContent = (SYSTEM_SPEC.length + 2 + dynamicPart.length) + ' ' + t.charsCount;
+      document.getElementById('bundle-len').textContent = (activeSpecText.length + 2 + dynamicPart.length) + ' ' + t.charsCount;
 
       document.getElementById('btn-dir-ru').className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ' + (direction === 'ru-to-custom' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200');
       document.getElementById('btn-dir-custom').className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ' + (direction === 'custom-to-ru' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200');
@@ -854,6 +1219,17 @@
       renderMatrix();
       renderHistory();
     }
+
+    document.getElementById('btn-layout-rtc1').addEventListener('click', () => {
+      activeLayout = 'rtc1';
+      customTextarea.value = encodeToCustom(ruTextarea.value);
+      syncAllUI();
+    });
+    document.getElementById('btn-layout-rtc2').addEventListener('click', () => {
+      activeLayout = 'rtc2';
+      customTextarea.value = encodeToCustom(ruTextarea.value);
+      syncAllUI();
+    });
 
     document.getElementById('btn-ui-ru').addEventListener('click', () => {
       uiLang = 'ru';
@@ -935,10 +1311,11 @@
       if (!ruTextarea.value.trim() && !customTextarea.value.trim()) return;
       historyItems.unshift({
         id: 'h-' + Date.now(),
+        layout: activeLayout,
         ruText: ruTextarea.value,
         customText: customTextarea.value,
         spaceMode,
-        timestamp: new Date().toLocaleTimeString(uiLang === 'en' ? 'en-US' : 'ru-RU', { hour: '2-digit', minute: '2-digit' })
+        timestamp: (activeLayout === 'rtc2' ? 'rtc2 code' : 'Старый') + ' · ' + new Date().toLocaleTimeString(uiLang === 'en' ? 'en-US' : 'ru-RU', { hour: '2-digit', minute: '2-digit' })
       });
       syncAllUI();
     });
@@ -947,6 +1324,7 @@
       btn.addEventListener('click', () => {
         activeLangFilter = btn.getAttribute('data-lang');
         document.querySelectorAll('.lang-filter-btn').forEach(b => {
+          if (b.classList.contains('hidden')) return;
           b.className = 'lang-filter-btn px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ' +
             (b.getAttribute('data-lang') === activeLangFilter ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-slate-200');
         });
@@ -978,11 +1356,12 @@
       flashCopyButton(e.currentTarget, I18N[uiLang].copiedMainBtn);
     });
     document.getElementById('btn-copy-spec-only').addEventListener('click', (e) => {
-      navigator.clipboard.writeText(SYSTEM_SPEC);
+      navigator.clipboard.writeText(activeLayout === 'rtc2' ? RTC2_SYSTEM_SPEC : SYSTEM_SPEC);
       flashCopyButton(e.currentTarget, I18N[uiLang].specCopiedOnlyBtn);
     });
     document.getElementById('btn-copy-bundle').addEventListener('click', (e) => {
-      navigator.clipboard.writeText(SYSTEM_SPEC + '\n\n' + specDynamicBox.textContent);
+      const spec = activeLayout === 'rtc2' ? RTC2_SYSTEM_SPEC : SYSTEM_SPEC;
+      navigator.clipboard.writeText(spec + '\n\n' + specDynamicBox.textContent);
       flashCopyButton(e.currentTarget, I18N[uiLang].specCopiedBundleBtn);
     });
 
